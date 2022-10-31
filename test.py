@@ -1,16 +1,14 @@
-from psycopg2 import OperationalError
-# database connection test
-from utils import DatabaseConnector as dbc
-try:
-    db = dbc.DatabaseConnector()
-    cur = db.cursor
-    cur.execute("insert into admin(full_name, username, gender) values ('chdsmart', 'chdyo', 'male')")
-    cur.execute("select * from admin")
-    # print(cur.fetchone())
-    print(cur.fetchall())
-except OperationalError as e:
-    print(e)
-finally:
-    db.close()
+from tkinter import ttk, Tk
+from PIL import ImageTk, Image
+from pathlib import Path
 
 
+root = Tk()
+root.geometry("700x600")
+
+frame = ttk.Frame(root)
+img = ImageTk.PhotoImage(Image.open(Path("res/taxibooking.jpg")))
+image = ttk.Label(frame, image=img)
+image.pack(side="left", fill="both")
+frame.pack()
+root.mainloop()

@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 
-class BaseWindow(object):
+class BaseWindow(tk.Tk):
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(BaseWindow, cls).__new__(cls)
@@ -10,26 +10,32 @@ class BaseWindow(object):
 
     def __init__(self):
         # create app object and create some variables
-        self.__root = tk.Tk()
-
+        super().__init__()
         # application window total size in percent
-        self.__app_size_percent = 75
+        self.__app_size_percent = 85
 
         # total height and width of the screen (screen resolution)
-        self.__scr_height = self.__root.winfo_height()
-        self.__scr_width = self.__root.winfo_width()
-
+        self.__scr_height = self.winfo_screenheight()
+        self.__scr_width = self.winfo_screenwidth()
         # height and width of the application window
-        self.__app_width =  self.__scr_width * self.__app_size_percent / 100
-        self.__app_height =  self.__scr_height * self.__app_size_percent / 100
+        self.__app_width = int(self.__scr_width * self.__app_size_percent / 100)
+        self.__app_height = int(self.__scr_height * self.__app_size_percent / 100)
 
-        self.__root.title("Taxi Booking")
-        self.__root.geometry(f"{self.__app_height}x{self.__app_width}")
+        self.title("Taxi Booking")
+        self.geometry("%dx%d" % (self.__app_width, self.__app_height))
+        self.resizable(False, False)
 
-        # create congiguration of style
+        # configure rows and columns to allow frames to cover whole parent
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        # create a style for the frame
+        style = ttk.Style()
+        style.configure("new.TFrame", background="#ffffff")
         # create a frame in the root window equal to the size of window
-        self.__frame = ttk.Frame(self.__root, width=self.__app_width, height=self.__app_height)
-        self.__frame.pack()
+        self.__frame = ttk.Frame(self, width=self.__app_width, height=self.__app_height, style="new.TFrame")
+
+        self.__frame.grid(row=0, column=0, sticky="nsew")
 
     def __destroy_view(self):
         for child in self.__frame.winfo_children():
@@ -41,9 +47,6 @@ class BaseWindow(object):
         self.__destroy_view()
         return self.__frame
 
-    def mainloop(self):
-        self.__root.mainloop()
-
     # return the x percent width of the app
     def get_width_pct(self, x):
         return self.__app_width * x / 100
@@ -51,3 +54,4 @@ class BaseWindow(object):
     # return the x percent height of the app
     def get_height_pct(self, x):
         return self.__app_height * x / 100
+
