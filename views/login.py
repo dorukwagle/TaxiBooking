@@ -1,5 +1,6 @@
-import tkinter
+import tkinter as tk
 from tkinter import ttk
+from .input_box import InputBox
 from PIL import ImageTk, Image
 from pathlib import Path
 from .base_window import BaseWindow
@@ -18,9 +19,12 @@ class LoginPage(ttk.Frame):
         # ))
         # image = ttk.Label(self, image=img)
         # image.pack(side="left")
-        label = ttk.Label(self, text="Now this is significantly insignificant...")
+
+        label = ttk.Button(self, text="Now this is significantly insignificant...")
         label.pack(side="left")
 
+        inp = InputBox(self, placeholder="password", fontcolor="red", font=("", 30))
+        inp.pack(side="top")
         self.pack()
 
         # start the event listener
