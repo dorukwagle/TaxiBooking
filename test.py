@@ -1,14 +1,14 @@
-from tkinter import ttk, Tk
-from PIL import ImageTk, Image
-from pathlib import Path
+import sys
+from array import array
 
+lst = [3,5,6]
+llst = array("i", lst)
+total_size = 0
+print("list: ", sys.getsizeof(llst))
 
-root = Tk()
-root.geometry("700x600")
+for item in llst:
+    size = sys.getsizeof(item)
+    print(item, ":", size)
+    total_size += size
 
-frame = ttk.Frame(root)
-img = ImageTk.PhotoImage(Image.open(Path("res/taxibooking.jpg")))
-image = ttk.Label(frame, image=img)
-image.pack(side="left", fill="both")
-frame.pack()
-root.mainloop()
+print("total: ", sys.getsizeof(lst) - sys.getsizeof([]))

@@ -3,12 +3,13 @@ from tkinter import StringVar
 
 
 class InputBox(Entry):
-    def __init__(self, container, text="", placeholder="", fontcolor="#000000", **kwargs):
-        self.__place_color = "#D3D3D3"
-        self.__foreground = fontcolor
-        self.__holder = StringVar()
+    def __init__(self, container, text="", placeholder="", input_type="", font_color="", placeholder_color="", **kw):
+        self.__place_color = "#D3D3D3" if not placeholder_color else placeholder_color
+        self.__foreground = font_color if font_color else "#000000"
+        self.__show = "*" if input_type == "password" else ''
+        self.__holder = StringVar(container)
         self.__placeholder = placeholder
-        super().__init__(container, textvariable=self.__holder, **kwargs)
+        super().__init__(container, textvariable=self.__holder, **kw)
         self.__text = self.__holder.get()
 
         # add action listener
@@ -27,20 +28,20 @@ class InputBox(Entry):
     def add_placeholder(self, placeholder):
         self.__holder.set("")
         self.__holder.set(placeholder)
-        self.config(foreground=self.__place_color)
+        self.config(foreground=self.__place_color, show='')
 
     # add text to the textbox provided during creation
     def initial_text(self, text):
         self.__text = text
         self.__holder.set(self.__text)
-        self.config(foreground=self.__foreground)
+        self.config(foreground=self.__foreground, show=self.__show)
 
     def on_key(self, key):
         # check if there is placeholder or text
         if not self.__text:
             # remove placeholder and change the color
             self.__holder.set("")
-            self.config(foreground=self.__foreground)
+            self.config(foreground=self.__foreground, show=self.__show)
             # temporarily hold a character, so when this event is called before the key
             # release event is called, the condition becomes false and this code do not execute
             self.__text = key.char
@@ -60,3 +61,6 @@ class InputBox(Entry):
         if self.__text:
             return
         self.icursor(0)
+
+    def get(self):
+        return self.__holder.get()
