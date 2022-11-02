@@ -6,7 +6,7 @@ from pathlib import Path
 from .base_window import BaseWindow
 
 
-class LoginPage(ttk.Frame):
+class RegistrationPage(ttk.Frame):
     def __init__(self, controller, parent):
         self.__controller = controller
         self.font = ("", 20)
@@ -19,7 +19,7 @@ class LoginPage(ttk.Frame):
         canvas = tk.Canvas(self, width=parent.get_width_pct(100), height=parent.get_height_pct(100))
         canvas.pack()
         # create image
-        img = ImageTk.PhotoImage(Image.open(Path("res/taxi1.jpg")).resize(
+        img = ImageTk.PhotoImage(Image.open(Path("res/taxi2.jpg")).resize(
             (int(parent.get_width_pct(100)), int(parent.get_height_pct(100))), Image.ANTIALIAS))
         # add image to canvas
         canvas.create_image(0, 0, anchor=tk.NW, image=img)
@@ -29,10 +29,13 @@ class LoginPage(ttk.Frame):
         canvas.create_window(parent.get_width_pct(70), parent.get_height_pct(30), anchor=tk.NW, window=base_frame)
 
         # create intro label # Taxi at your fingertip! \n Book a trip now!!!
-        canvas.create_text(parent.get_width_pct(10), parent.get_height_pct(45),
-                           text="now this is significantly insignificant", fill="white", font=("", 30, "bold"), anchor=tk.NW)
-        canvas.create_text(parent.get_width_pct(20), parent.get_height_pct(51),
-                           text="better luck nextTime", fill="white", font=("", 30, "bold"), anchor=tk.NW)
+        self.__text1 = canvas.create_text(parent.get_width_pct(10), parent.get_height_pct(45),
+                                          text="now this is significantly insignificant", fill="white",
+                                          font=("", 30, "bold"),
+                                          anchor=tk.NW)
+        self.__text2 = canvas.create_text(parent.get_width_pct(20), parent.get_height_pct(51),
+                                          text="better luck nextTime", fill="white", font=("", 30, "bold"),
+                                          anchor=tk.NW)
 
         style = ttk.Style()
         style.configure("TFrame", background="#d4d4d4")

@@ -11,6 +11,9 @@ class BaseWindow(tk.Tk):
     def __init__(self):
         # create app object and create some variables
         super().__init__()
+        # create theme
+        style = ttk.Style(self)
+        style.theme_use("alt")
         # application window total size in percent
         self.__app_size_percent = 85
 

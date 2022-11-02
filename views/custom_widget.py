@@ -1,8 +1,8 @@
-from tkinter.ttk import Entry
+from tkinter import ttk
 from tkinter import StringVar
 
 
-class InputBox(Entry):
+class InputBox(ttk.Entry):
     def __init__(self, container, text="", placeholder="", input_type="", font_color="", placeholder_color="", **kw):
         self.__place_color = "#D3D3D3" if not placeholder_color else placeholder_color
         self.__foreground = font_color if font_color else "#000000"
@@ -63,4 +63,25 @@ class InputBox(Entry):
         self.icursor(0)
 
     def get(self):
-        return self.__holder.get()
+        return self.__text
+
+
+class Button(ttk.Button):
+    def __init__(self, container, text, fg="", bg="", fg_hover="", bg_hover="",
+                 fg_pressed="", bg_pressed="", font=("", 10), **kwargs):
+        self.__fg = "black" if not fg else fg
+        self.__bg = bg if bg else "grey75"
+        self.__fg_hover = self.__fg if not fg_hover else fg_hover
+        self.__bg_hover = "white" if not bg_hover else bg_hover
+        self.__fg_pressed = fg_pressed if fg_pressed else self.__fg_hover
+        self.__bg_pressed = bg_pressed if bg_pressed else self.__bg_hover
+
+        self.__style_name = str(id(self)) + ".TButton"
+        self.__style = ttk.Style()
+        self.__style.map(self.__style_name,
+                  foreground=[('!active', self.__fg), ('pressed', self.__fg_pressed), ('active', self.__fg_hover)],
+                  background=[('!active', self.__bg), ('pressed', self.__bg_pressed), ('active', self.__bg_hover)])
+
+        self.__style.configure(self.__style_name, foreground=self.__fg, background=self.__bg, font=font)
+        super().__init__(container, text=text, style=self.__style_name, **kwargs)
+
