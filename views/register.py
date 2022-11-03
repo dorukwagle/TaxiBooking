@@ -31,17 +31,21 @@ class RegistrationPage(ttk.Frame):
         self.__canvas.create_window(parent.get_width_pct(70), parent.get_height_pct(20), anchor=tk.NW,
                                     window=base_frame)
 
-        # create intro label # Taxi at your fingertip! \n Book a trip now!!!
+        # create intro label
         self.__text1 = self.__canvas.create_text(parent.get_width_pct(10), parent.get_height_pct(45),
-                                                 text="We guarantee you the deadliest crash", fill="white",
+                                                 text="", fill="white",
                                                  font=("", 30, "bold"),
                                                  anchor=tk.NW)
         self.__text2 = self.__canvas.create_text(parent.get_width_pct(20), parent.get_height_pct(51),
-                                                 text="Experience the death!", fill="white", font=("", 30, "bold"),
+                                                 text="", fill="white", font=("", 30, "bold"),
                                                  anchor=tk.NW)
 
+        style = ttk.Style()
+        # style.map("TNotebook.Tab", background=[("", "white")])
+        style.configure('TNotebook.Tab', background="grey", foreground="black", padding=[25, 8], font=("", 13, "bold"))
+        style.configure('TNotebook', padding=[10, 10], background="grey")
         # create a Notebook to hold both registration form
-        self.tab_control = ttk.Notebook(base_frame)
+        self.tab_control = ttk.Notebook(base_frame, takefocus=0)
         self.tab_control.bind("<<NotebookTabChanged>>", self.on_tab_change)
         # create tabs
         customer_tab = ttk.Frame(self.tab_control)
@@ -69,9 +73,11 @@ class RegistrationPage(ttk.Frame):
         tab = self.tab_control.tab(self.tab_control.select(), "text")
 
         if tab == "Driver SignUp":
+            # Get Yourself to Work!! \n We Value Your Work!!!
             self.__canvas.itemconfig(self.__text1, text="Register your skill to crash")
             self.__canvas.itemconfig(self.__text2, text="Get the car smashed")
         else:
+            # Taxi at your fingertip! \n Book a trip now!!!
             self.__canvas.itemconfig(self.__text1, text="We guarantee you the deadliest crash")
             self.__canvas.itemconfig(self.__text2, text="Experience the death")
 

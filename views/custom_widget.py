@@ -9,7 +9,7 @@ class InputBox(ttk.Entry):
         self.__show = "*" if input_type == "password" else ''
         self.__holder = StringVar(container)
         self.__placeholder = placeholder
-        super().__init__(container, textvariable=self.__holder, **kw)
+        super().__init__(container, textvariable=self.__holder,  **kw)
         self.__text = self.__holder.get()
 
         # add action listener

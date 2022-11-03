@@ -28,7 +28,7 @@ class LoginPage(ttk.Frame):
         base_frame = ttk.Frame(self, style="new.TFrame")
         canvas.create_window(parent.get_width_pct(70), parent.get_height_pct(30), anchor=tk.NW, window=base_frame)
 
-        # create intro label # Taxi at your fingertip! \n Book a trip now!!!
+        # create intro label # Everything in life is somewhere else, and!! \n You get there in a cab!!!
         canvas.create_text(parent.get_width_pct(10), parent.get_height_pct(45),
                            text="now this is significantly insignificant", fill="white", font=("", 30, "bold"), anchor=tk.NW)
         canvas.create_text(parent.get_width_pct(20), parent.get_height_pct(51),

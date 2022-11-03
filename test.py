@@ -1,14 +1,12 @@
-import sys
-from array import array
+from tkinter import Tk, Label
+from PIL import Image, ImageTk
 
-lst = [3,5,6]
-llst = array("i", lst)
-total_size = 0
-print("list: ", sys.getsizeof(llst))
+root = Tk()
 
-for item in llst:
-    size = sys.getsizeof(item)
-    print(item, ":", size)
-    total_size += size
+img = Image.open("res/taxi1.jpg")
+imag = ImageTk.PhotoImage(file="res/taxi1.jpg")
 
-print("total: ", sys.getsizeof(lst) - sys.getsizeof([]))
+label = Label(root, image=imag)
+label.pack()
+
+root.mainloop()
