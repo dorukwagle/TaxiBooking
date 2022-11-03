@@ -45,7 +45,7 @@ class LoginPage(ttk.Frame):
         self.username.pack()
         # add space
         ttk.Label(input_frame, text="", font=("", 5)).pack()
-        self.password = cw.InputBox(input_frame, placeholder="password", input_type="password",
+        self.password = cw.InputBox(input_frame, placeholder="Password", input_type="password",
                                     placeholder_color="#c3c3c3", font=self.font)
         self.password.pack()
         ttk.Label(input_frame, text="", font=("", 2)).pack()
