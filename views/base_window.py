@@ -14,6 +14,10 @@ class BaseWindow(tk.Tk):
         # create theme
         style = ttk.Style(self)
         style.theme_use("alt")
+        style.map('TCombobox', fieldbackground=[('readonly', 'white')])
+        style.map('TCombobox', selectbackground=[('readonly', 'white')])
+        style.map('TCombobox', selectforeground=[('readonly', 'black')])
+        style.configure("TCombobox", background="white", foreground="grey")
         # application window total size in percent
         self.__app_size_percent = 85
 

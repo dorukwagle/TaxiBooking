@@ -7,6 +7,10 @@ import time
 from .base_window import BaseWindow
 
 
+def combo_select(combobox):
+    combobox["foreground"] = "black"
+
+
 class RegistrationPage(ttk.Frame):
     def __init__(self, controller, parent):
         self.__controller = controller
@@ -28,7 +32,7 @@ class RegistrationPage(ttk.Frame):
 
         # frame to hold all the elements
         base_frame = ttk.Frame(self, style="new.TFrame")
-        self.__canvas.create_window(parent.get_width_pct(70), parent.get_height_pct(20), anchor=tk.NW,
+        self.__canvas.create_window(parent.get_width_pct(70), parent.get_height_pct(10), anchor=tk.NW,
                                     window=base_frame)
 
         # create intro label
@@ -82,7 +86,6 @@ class RegistrationPage(ttk.Frame):
             self.__canvas.itemconfig(self.__text2, text="Experience the death")
 
 
-
 class CustomerRegistration(ttk.Frame):
     def __init__(self, container):
         self.font = ("", 20)
@@ -93,7 +96,14 @@ class CustomerRegistration(ttk.Frame):
 
         # create form elements
         self.username = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
+        # self.username.bind("<Tab>", self.tab_handler)
         self.username.pack()
+        # add space
+        ttk.Label(self, text="", font=("", 2)).pack()
+        self.gender = ttk.Combobox(self, values=["Male", "Female"], background="white", font=("", 15), state="readonly")
+        self.gender.set("<<Select Gender>>")
+        self.gender.pack(expand=1, fill="both")
+        self.gender.bind("<<ComboboxSelected>>", lambda event: combo_select(self.gender) )
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
@@ -111,7 +121,13 @@ class CustomerRegistration(ttk.Frame):
         self.username.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
-
+        self.payment_method = ttk.Combobox(self, values=["Credit Card", "Bank Transfer", "Cash"], background="white",
+                                           font=("", 15), state="readonly")
+        self.payment_method.set("<<Payment Method>>")
+        self.payment_method.bind("<<ComboboxSelected>>", lambda event: combo_select(self.payment_method))
+        self.payment_method.pack(expand=1, fill="both")
+        # add space
+        ttk.Label(self, text="", font=("", 2)).pack()
         self.username = cw.InputBox(self, placeholder="Username", placeholder_color="#c3c3c3", font=self.font)
         self.username.pack()
         # add space
@@ -149,11 +165,11 @@ class DriverRegistration(ttk.Frame):
         self.username.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
-        self.gender = ttk.Combobox(self)
+
+        self.gender = ttk.Combobox(self, values=["Male", "Female"], background="white", font=("", 15), state="readonly")
         self.gender.set("<<Select Gender>>")
-        self.gender["values"] = ("Male", "Female")
-        self.gender["state"] = "readonly"
-        self.gender.pack()
+        self.gender.bind("<<ComboboxSelected>>", lambda event: combo_select(self.gender))
+        self.gender.pack(expand=1, fill="both")
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
