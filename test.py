@@ -1,15 +1,31 @@
 from tkinter import Tk, Label
 from PIL import Image, ImageTk
 
-root = Tk()
+# root = Tk()
+#
+# img = Image.open("res/taxi1.jpg")
+# imag = ImageTk.PhotoImage(file="res/taxi1.jpg")
+#
+# label = Label(root, image=imag)
+# label.pack()
+#
+# root.mainloop()
 
-img = Image.open("res/taxi1.jpg")
-imag = ImageTk.PhotoImage(file="res/taxi1.jpg")
+a = {i*2 for i in range(1,12)}
+b = {i*2 for i in range(6, 15)}
 
-label = Label(root, image=imag)
-label.pack()
+c = a - b
+c.update(b - a)
+print(c)
+# second method
 
-root.mainloop()
+new_set = (a | b) - (a & b)
+print(new_set)
+
+# third method
+
+set3 = a.union(b) - a.intersection(b)
+print(set3)
 
 # tab control
 

@@ -42,11 +42,11 @@ class RegistrationPage(ttk.Frame):
 
         # create intro label
         self.__text1 = self.__canvas.create_text(parent.get_width_pct(10), parent.get_height_pct(45),
-                                                 text="", fill="white",
+                                                 text="We guarantee you the deadliest crash", fill="white",
                                                  font=("", 30, "bold"),
                                                  anchor=tk.NW)
         self.__text2 = self.__canvas.create_text(parent.get_width_pct(20), parent.get_height_pct(51),
-                                                 text="", fill="white", font=("", 30, "bold"),
+                                                 text="Experience the death", fill="white", font=("", 30, "bold"),
                                                  anchor=tk.NW)
         # add registration page to the base frame
         CustomerRegistration(base_frame).pack()
@@ -59,19 +59,6 @@ class RegistrationPage(ttk.Frame):
         img = ImageTk.PhotoImage(Image.open(Path(path)).resize(
             (int(self.__parent.get_width_pct(100)), int(self.__parent.get_height_pct(100))), Image.ANTIALIAS))
         return img
-
-    def on_tab_change(self, *args):
-
-        tab = self.tab_control.tab(self.tab_control.select(), "text")
-
-        if tab == "Driver SignUp":
-            # Get Yourself to Work!! \n We Value Your Work!!!
-            self.__canvas.itemconfig(self.__text1, text="Register your skill to crash")
-            self.__canvas.itemconfig(self.__text2, text="Get the car smashed")
-        else:
-            # Taxi at your fingertip! \n Book a trip now!!!
-            self.__canvas.itemconfig(self.__text1, text="We guarantee you the deadliest crash")
-            self.__canvas.itemconfig(self.__text2, text="Experience the death")
 
 
 class CustomerRegistration(ttk.Frame):
