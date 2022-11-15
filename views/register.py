@@ -50,7 +50,6 @@ class RegistrationPage(ttk.Frame):
                                                  anchor=tk.NW)
         # add registration page to the base frame
         CustomerRegistration(base_frame).pack()
-
         self.pack()
         # start the event listener
         parent.mainloop()
@@ -127,61 +126,61 @@ class CustomerRegistration(ttk.Frame):
                   fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()
 
 
-# class DriverRegistration(ttk.Frame):
-#     def __init__(self, container):
-#         self.font = ("", 20)
-#         style = ttk.Style()
-#         style.configure("TFrame", background="#d4d4d4")
-#         # create right frame to hold form box
-#         super().__init__(container, style="TFrame", padding=25)
-#
-#         # create form elements
-#         self.username = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
-#         self.username.pack()
-#         # add space
-#         ttk.Label(self, text="", font=("", 2)).pack()
-#
-#         self.gender = ttk.Combobox(self, values=["Male", "Female"], background="white", font=("", 15), state="readonly")
-#         self.gender.set("<<Select Gender>>")
-#         self.gender.bind("<<ComboboxSelected>>", lambda event: combo_select(self.gender))
-#         self.gender.pack(expand=1, fill="both")
-#         # add space
-#         ttk.Label(self, text="", font=("", 2)).pack()
-#
-#         self.username = cw.InputBox(self, placeholder="Email Address", placeholder_color="#c3c3c3", font=self.font)
-#         self.username.pack()
-#         # add space
-#         ttk.Label(self, text="", font=("", 2)).pack()
-#
-#         self.username = cw.InputBox(self, placeholder="Address", placeholder_color="#c3c3c3", font=self.font)
-#         self.username.pack()
-#         # add space
-#         ttk.Label(self, text="", font=("", 2)).pack()
-#
-#         self.username = cw.InputBox(self, placeholder="License ID", placeholder_color="#c3c3c3", font=self.font)
-#         self.username.pack()
-#         # add space
-#         ttk.Label(self, text="", font=("", 2)).pack()
-#
-#         self.username = cw.InputBox(self, placeholder="Username", placeholder_color="#c3c3c3", font=self.font)
-#         self.username.pack()
-#         # add space
-#         ttk.Label(self, text="", font=("", 2)).pack()
-#         self.password = cw.InputBox(self, placeholder="Password", input_type="password",
-#                                     placeholder_color="#c3c3c3", font=self.font)
-#         self.password.pack()
-#
-#         ttk.Label(self, text="", font=("", 2)).pack()
-#         self.confirm_password = cw.InputBox(self, placeholder="Confirm Password", input_type="password",
-#                                             placeholder_color="#c3c3c3", font=self.font)
-#         self.confirm_password.pack()
-#
-#         ttk.Label(self, text="", font=("", 2)).pack()
-#         # display error message
-#         self.error_msg = ttk.Label(self, text="error msg", font=("", 12), foreground="red")
-#         self.error_msg.pack()
-#
-#         ttk.Label(self, text="", font=("", 2)).pack()
-#
-#         cw.Button(self, text="Sign Up", takefocus=0, width=15, font=("", 20),
-#                   fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()
+class DriverRegistration(ttk.Frame):
+    def __init__(self, container):
+        self.font = ("", 20)
+        style = ttk.Style()
+        style.configure("TFrame", background="#d4d4d4")
+        # create right frame to hold form box
+        super().__init__(container, style="TFrame", padding=25)
+
+        # create form elements
+        self.username = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
+        self.username.pack()
+        # add space
+        ttk.Label(self, text="", font=("", 2)).pack()
+
+        self.gender = ttk.Combobox(self, values=["Male", "Female"], background="white", font=("", 15), state="readonly")
+        self.gender.set("<<Select Gender>>")
+        self.gender.bind("<<ComboboxSelected>>", lambda event: combo_select(self.gender))
+        self.gender.pack(expand=1, fill="both")
+        # add space
+        ttk.Label(self, text="", font=("", 2)).pack()
+
+        self.username = cw.InputBox(self, placeholder="Email Address", placeholder_color="#c3c3c3", font=self.font)
+        self.username.pack()
+        # add space
+        ttk.Label(self, text="", font=("", 2)).pack()
+
+        self.username = cw.InputBox(self, placeholder="Address", placeholder_color="#c3c3c3", font=self.font)
+        self.username.pack()
+        # add space
+        ttk.Label(self, text="", font=("", 2)).pack()
+
+        self.username = cw.InputBox(self, placeholder="License ID", placeholder_color="#c3c3c3", font=self.font)
+        self.username.pack()
+        # add space
+        ttk.Label(self, text="", font=("", 2)).pack()
+
+        self.username = cw.InputBox(self, placeholder="Username", placeholder_color="#c3c3c3", font=self.font)
+        self.username.pack()
+        # add space
+        ttk.Label(self, text="", font=("", 2)).pack()
+        self.password = cw.InputBox(self, placeholder="Password", input_type="password",
+                                    placeholder_color="#c3c3c3", font=self.font)
+        self.password.pack()
+
+        ttk.Label(self, text="", font=("", 2)).pack()
+        self.confirm_password = cw.InputBox(self, placeholder="Confirm Password", input_type="password",
+                                            placeholder_color="#c3c3c3", font=self.font)
+        self.confirm_password.pack()
+
+        ttk.Label(self, text="", font=("", 2)).pack()
+        # display error message
+        self.error_msg = ttk.Label(self, text="error msg", font=("", 12), foreground="red")
+        self.error_msg.pack()
+
+        ttk.Label(self, text="", font=("", 2)).pack()
+
+        cw.Button(self, text="Sign Up", takefocus=0, width=15, font=("", 20),
+                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()

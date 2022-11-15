@@ -11,21 +11,7 @@ from PIL import Image, ImageTk
 #
 # root.mainloop()
 
-a = {i*2 for i in range(1,12)}
-b = {i*2 for i in range(6, 15)}
 
-c = a - b
-c.update(b - a)
-print(c)
-# second method
-
-new_set = (a | b) - (a & b)
-print(new_set)
-
-# third method
-
-set3 = a.union(b) - a.intersection(b)
-print(set3)
 
 # tab control
 
