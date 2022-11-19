@@ -9,7 +9,7 @@ class InputBox(ttk.Entry):
         self.__show = "*" if input_type == "password" else ''
         self.__holder = StringVar(container)
         self.__placeholder = placeholder
-        super().__init__(container, textvariable=self.__holder, takefocus=0,  **kw)
+        super().__init__(container, textvariable=self.__holder, takefocus=0, **kw)
         self.__text = self.__holder.get()
 
         # add action listener
@@ -79,9 +79,10 @@ class Button(ttk.Button):
         self.__style_name = str(id(self)) + ".TButton"
         self.__style = ttk.Style()
         self.__style.map(self.__style_name,
-                  foreground=[('!active', self.__fg), ('pressed', self.__fg_pressed), ('active', self.__fg_hover)],
-                  background=[('!active', self.__bg), ('pressed', self.__bg_pressed), ('active', self.__bg_hover)])
+                         foreground=[('!active', self.__fg), ('pressed', self.__fg_pressed),
+                                     ('active', self.__fg_hover)],
+                         background=[('!active', self.__bg), ('pressed', self.__bg_pressed),
+                                     ('active', self.__bg_hover)])
 
         self.__style.configure(self.__style_name, foreground=self.__fg, background=self.__bg, font=font)
         super().__init__(container, text=text, style=self.__style_name, **kwargs)
-
