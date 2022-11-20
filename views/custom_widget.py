@@ -3,13 +3,13 @@ from tkinter import StringVar
 
 
 class InputBox(ttk.Entry):
-    def __init__(self, container, text="", placeholder="", input_type="", font_color="", placeholder_color="", **kw):
+    def __init__(self, container, text="", placeholder="", input_type="", takefocus=0, font_color="", placeholder_color="", **kw):
         self.__place_color = "#D3D3D3" if not placeholder_color else placeholder_color
         self.__foreground = font_color if font_color else "#000000"
         self.__show = "*" if input_type == "password" else ''
         self.__holder = StringVar(container)
         self.__placeholder = placeholder
-        super().__init__(container, textvariable=self.__holder, takefocus=0, **kw)
+        super().__init__(container, textvariable=self.__holder, takefocus=takefocus, **kw)
         self.__text = self.__holder.get()
 
         # add action listener

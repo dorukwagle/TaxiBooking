@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 import views.custom_widget as cw
-from pathlib import Path
 from PIL import ImageTk, Image
+from tktimepicker import AnalogPicker, AnalogThemes, constants
+from tkcalendar import Calendar
 
 
 class CustomerDashboard(ttk.Frame):
@@ -70,7 +71,7 @@ class CustomerDashboard(ttk.Frame):
         # update the idle tasks so the BookingSection can use actual width and height of the widgets in self
         self.update_idletasks()
         # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
-        BookingSection(self.base_frame)
+        BookingSection(self.base_frame).pack()
 
         self.pack()
         parent.mainloop()
@@ -133,6 +134,26 @@ class BookingSection(ttk.Frame):
 
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 40)).pack()
+
+        img_calendar = ImageTk.PhotoImage(Image.open("res/calendar_icon.png"))
+        self.date_input = ttk.Label(self.__panel_frame, background="silver", text="<<Select Date>>",
+                                       font=("", 15), image=img_calendar, compound="right")
+        self.date_input.bind("<ButtonRelease>", self.__date_pick)
+        self.date_input.pack(padx=self.__panel_width * 0.1, fill=tk.X)
+        img_test = ImageTk.PhotoImage(Image.open("res/female_avatar.png"))
+        test = ttk.Label(self.__map_frame, image=img_test, text="test image with text", compound="top")
+        test.pack()
+        # add space
+        ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 5)).pack()
+        img_clock = ImageTk.PhotoImage(Image.open("res/clock_icon.png"))
+        self.time_input = ttk.Label(self.__panel_frame, background="silver", text="<<Select Time>>",
+                                       font=("", 15), image=img_clock, compound="none")
+        self.time_input.bind("<ButtonRelease>", self.__pick_time)
+        self.time_input.pack(padx=self.__panel_width * 0.1, fill=tk.X)
+
+        # add space
+        # ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 40)).pack()
+        # ttk.Label(self.__map_frame, image=tk.PhotoImage(file="res/clock_icon.png")).pack()
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 40)).pack()
         cw.Button(self.__panel_frame, text="Confirm Trip",
                   takefocus=0, font=("", 20, "bold", "italic"),
@@ -141,6 +162,19 @@ class BookingSection(ttk.Frame):
             .pack(fill=tk.X)
 
         self.pack()
+
+        # create time input
+    def __pick_time(self, _):
+        top = tk.Toplevel(self.__panel_frame)
+        time_input = AnalogPicker(top, type=constants.HOURS12)
+        time_input.pack()
+        AnalogThemes(time_input).setNavyBlue()
+
+        # create date input calendar
+    def __date_pick(self, _):
+        top = tk.Toplevel(self.__panel_frame)
+        calendar = Calendar(top, selectmode="day")
+        calendar.pack()
 
 
 class TripDetailsSection(ttk.Frame):

@@ -77,7 +77,7 @@ class CustomerRegistration(ttk.Frame):
         self.gender = ttk.Combobox(self, values=["Male", "Female"], background="white", font=("", 15), state="readonly")
         self.gender.set("<<Select Gender>>")
         self.gender.pack(expand=1, fill="both")
-        self.gender.bind("<<ComboboxSelected>>", lambda event: combo_select(self.gender) )
+        self.gender.bind("<<ComboboxSelected>>", lambda event: combo_select(self.gender))
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
