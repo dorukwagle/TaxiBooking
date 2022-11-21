@@ -5,13 +5,19 @@ from PIL import ImageTk, Image
 from tktimepicker import AnalogPicker, AnalogThemes, constants
 from tkcalendar import Calendar
 
+from views.base_window import BaseWindow
+
 
 class CustomerDashboard(ttk.Frame):
+    # define button configuration
+    button_args = dict(takefocus=0, font=("", 20, "bold", "italic"),
+                       fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522",
+                       bg_pressed="#043927", cursor="hand2")
+
     def __init__(self, controller, parent, user_info):
         self.__controller = controller
         self.__parent = parent
         super().__init__(self.__parent.frame)
-
         # configure styles for frames and labels
         style = ttk.Style()
         style.configure("profile.TFrame", background="#A3E3BE")
@@ -45,32 +51,26 @@ class CustomerDashboard(ttk.Frame):
         # add space
         ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 40)).pack()
         # booking button
-        self.book_btn = cw.Button(self.__profile_frame, text="Book Trip",
-                                  takefocus=0, font=("", 20, "bold", "italic"),
-                                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927",
+        self.book_btn = cw.Button(self.__profile_frame, text="Book Trip", **CustomerDashboard.button_args
                                   )
         self.book_btn.pack(fill=tk.X, padx=parent.get_width_pct(5))
         # add space
         ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 10)).pack()
 
         # Trip details button
-        self.details_btn = cw.Button(self.__profile_frame, text="Trip Details",
-                                     takefocus=0, font=("", 20, "bold", "italic"),
-                                     fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522",
-                                     bg_pressed="#043927"
+        self.details_btn = cw.Button(self.__profile_frame, text="Trip Details", **CustomerDashboard.button_args
                                      )
         self.details_btn.pack(fill=tk.X, padx=parent.get_width_pct(5))
 
         # sign out button
         cw.Button(self.__profile_frame, text="Sign Out",
-                  takefocus=0, font=("", 23, "bold", "italic"),
-                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927"
+                  **CustomerDashboard.button_args
                   ).pack(fill=tk.X, side=tk.BOTTOM)
 
         # update the idle tasks so the BookingSection can use actual width and height of the widgets in self
         self.update_idletasks()
         # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
-        BookingSection(self.base_frame)
+        BookingSection(self.base_frame, self.__parent)
 
         self.pack()
 
@@ -88,11 +88,12 @@ def leave_frame(frame):
 
 
 class BookingSection(ttk.Frame):
-    def __init__(self, container):
+    def __init__(self, container, parent):
+        self.__parent = parent
         style = ttk.Style()
-        style.configure("map.TFrame", background="#22ff00")
-        style.configure("panel.TFrame", background="#aaff00")
-        style.configure("label.TLabel", background="#aaff00", font=("", 13, "italic"))
+        style.configure("map.TFrame", background="#ffffff")
+        style.configure("panel.TFrame", background="#ace1af")
+        style.configure("label.TLabel", background="#ace1af", font=("", 13, "italic"))
         style.configure("picker.TLabel", background="silver", font=("", 13, "italic"))
         style.configure("picker.TFrame", background="silver")
         style.configure("hover.TFrame", background="grey")
@@ -125,9 +126,7 @@ class BookingSection(ttk.Frame):
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 10)).pack()
         cw.Button(self.__panel_frame, text="Set Pickup",
-                  takefocus=0, font=("", 20, "bold", "italic"),
-                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522",
-                  bg_pressed="#043927")\
+                  **CustomerDashboard.button_args) \
             .pack(padx=self.__panel_width * 0.1, fill=tk.X)
 
         # add space
@@ -140,10 +139,7 @@ class BookingSection(ttk.Frame):
 
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 10)).pack()
-        cw.Button(self.__panel_frame, text="Set DropOff",
-                  takefocus=0, font=("", 20, "bold", "italic"),
-                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522",
-                  bg_pressed="#043927") \
+        cw.Button(self.__panel_frame, text="Set DropOff", **CustomerDashboard.button_args) \
             .pack(padx=self.__panel_width * 0.1, fill=tk.X)
 
         # add space
@@ -158,11 +154,7 @@ class BookingSection(ttk.Frame):
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 40)).pack()
         # ttk.Label(self.__map_frame, image=tk.PhotoImage(file="res/clock_icon.png")).pack()
-        cw.Button(self.__panel_frame, text="Confirm Trip",
-                  takefocus=0, font=("", 20, "bold", "italic"),
-                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522",
-                  bg_pressed="#043927") \
-            .pack(fill=tk.X)
+        cw.Button(self.__panel_frame, text="Confirm Trip", **CustomerDashboard.button_args).pack(fill=tk.X)
 
         self.pack()
 
@@ -177,9 +169,9 @@ class BookingSection(ttk.Frame):
         img = ttk.Label(dframe, image=self.__img_calendar, style="picker.TLabel")
         img.pack(side="right")
         # add action listener to all the three widgets
-        self.date_input.bind("<ButtonRelease>", self.__pick_date)
-        img.bind("<ButtonRelease>", self.__pick_date)
-        dframe.bind("<ButtonRelease>", self.__pick_date)
+        self.date_input.bind("<ButtonRelease>", self.__date_picker)
+        img.bind("<ButtonRelease>", self.__date_picker)
+        dframe.bind("<ButtonRelease>", self.__date_picker)
         dframe.bind("<Enter>", lambda *a: hover_frame(dframe))
         dframe.bind("<Leave>", lambda *a: leave_frame(dframe))
 
@@ -194,23 +186,46 @@ class BookingSection(ttk.Frame):
         img = ttk.Label(dframe, image=self.__img_clock, style="picker.TLabel")
         img.pack(side="right")
         # add action listener to all three widgets
-        self.time_input.bind("<ButtonRelease>", self.__pick_time)
-        img.bind("<ButtonRelease>", self.__pick_time)
-        dframe.bind("<ButtonRelease>", self.__pick_time)
+        self.time_input.bind("<ButtonRelease>", self.__time_picker)
+        img.bind("<ButtonRelease>", self.__time_picker)
+        dframe.bind("<ButtonRelease>", self.__time_picker)
         dframe.bind("<Enter>", lambda *a: hover_frame(dframe))
         dframe.bind("<Leave>", lambda *a: leave_frame(dframe))
 
-    def __pick_time(self, _):
+    def __time_picker(self, _):
         top = tk.Toplevel(self.__panel_frame)
         time_input = AnalogPicker(top, type=constants.HOURS12)
         time_input.pack()
         AnalogThemes(time_input).setNavyBlue()
+        btn = cw.Button(top, text="Select Time",
+                        **CustomerDashboard.button_args,
+                        command=lambda *a: self.__pick_time(time_input.time(), top))
+        btn.pack(side="bottom", fill=tk.X)
+        top.transient(self.__parent)
+        top.grab_set()
+        top.focus_set()
 
-        # create date input calendar
-    def __pick_date(self, _):
+    def __date_picker(self, _):
         top = tk.Toplevel(self.__panel_frame)
+        top.geometry(f'{int(self.__parent.get_width_pct(25))}x{int(self.__parent.get_height_pct(30))}')
+        top.title("Date Picker")
         calendar = Calendar(top, selectmode="day")
-        calendar.pack()
+        calendar.pack(fill=tk.BOTH)
+        btn = cw.Button(top, text="Select Date", **CustomerDashboard.button_args,
+                        command=lambda *a: self.__pick_date(calendar.get_date(), top))
+        btn.pack(side="bottom", fill=tk.X)
+        top.transient(self.__parent)
+        top.grab_set()
+        top.focus_set()
+
+    def __pick_time(self, time, dialog):
+        text = f'{time[0]} : {time[1]} : {time[2]}'
+        self.time_input.config(text=text)
+        dialog.destroy()
+
+    def __pick_date(self, date, dialog):
+        self.date_input.config(text=date)
+        dialog.destroy()
 
 
 class TripDetailsSection(ttk.Frame):

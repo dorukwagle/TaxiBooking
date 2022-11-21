@@ -3,6 +3,7 @@ from tkinter import ttk
 
 
 class BaseWindow(tk.Tk):
+
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(BaseWindow, cls).__new__(cls)
