@@ -4,9 +4,9 @@ from views.base_window import BaseWindow
 
 class CDashboardController:
 
-    def __init__(self, username=""):
+    def __init__(self, base_window, username=""):
         # get instance of the base window
-        self.__window = BaseWindow()
+        self.__window = base_window
         # self.frame = self.__window.frame
 
         # retrieve the user information from database
