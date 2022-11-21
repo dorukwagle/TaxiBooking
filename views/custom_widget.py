@@ -33,6 +33,9 @@ class InputBox(ttk.Entry):
 
     # add text to the textbox provided during creation
     def __initial_text(self, text):
+        if not text:
+            self.__add_placeholder(self.__placeholder)
+            return
         self.__text = text
         self.__holder.set(self.__text)
         self.config(foreground=self.__foreground, show=self.__show)

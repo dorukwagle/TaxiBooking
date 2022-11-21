@@ -4,8 +4,7 @@ import views.custom_widget as cw
 from PIL import ImageTk, Image
 from tktimepicker import AnalogPicker, AnalogThemes, constants
 from tkcalendar import Calendar
-
-from views.base_window import BaseWindow
+import tkintermapview as tkmap
 
 
 class CustomerDashboard(ttk.Frame):
@@ -70,7 +69,7 @@ class CustomerDashboard(ttk.Frame):
         # update the idle tasks so the BookingSection can use actual width and height of the widgets in self
         self.update_idletasks()
         # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
-        BookingSection(self.base_frame, self.__parent)
+        BookingSection(self.base_frame, controller, self.__parent)
 
         self.pack()
 
@@ -88,7 +87,7 @@ def leave_frame(frame):
 
 
 class BookingSection(ttk.Frame):
-    def __init__(self, container, parent):
+    def __init__(self, container, controller, parent):
         self.__parent = parent
         style = ttk.Style()
         style.configure("map.TFrame", background="#ffffff")
@@ -115,7 +114,21 @@ class BookingSection(ttk.Frame):
         self.__panel_frame.grid(row=0, column=1, sticky=tk.E)
 
         # add space
-        ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 20)).pack()
+        ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 10)).pack()
+        # add search bar and button
+        search_frame = ttk.Frame(self.__panel_frame)
+        search_frame.pack(fill=tk.X)
+        self.search_box = cw.InputBox(search_frame, font=("", 15, "bold", "italic"), width=17,
+                                      placeholder="Search Address", placeholder_color="silver")
+        self.search_box.pack(side="left")
+        search_btn = cw.Button(search_frame, text="Go",
+                               **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"},
+                               font=("", 15, "bold", "italic"),
+                               command=lambda *a: controller.search_map())
+        search_btn.pack(side="right")
+
+        # add space
+        ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 30)).pack()
 
         self.pick_label = ttk.Label(self.__panel_frame, text="<<Select Pick Up >>",
                                     justify=tk.LEFT, relief="raised",
@@ -155,6 +168,11 @@ class BookingSection(ttk.Frame):
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 40)).pack()
         # ttk.Label(self.__map_frame, image=tk.PhotoImage(file="res/clock_icon.png")).pack()
         cw.Button(self.__panel_frame, text="Confirm Trip", **CustomerDashboard.button_args).pack(fill=tk.X)
+
+        # ----------------------------Add Map-------------------------------------
+        self.update_idletasks()
+        self.map = tkmap.TkinterMapView(self.__map_frame, width=self.__map_width, height=self.__height, corner_radius=0)
+        self.map.pack(fill=tk.BOTH)
 
         self.pack()
 
