@@ -15,8 +15,8 @@ class CustomerDashboard(ttk.Frame):
 
     def __init__(self, controller, parent, user_info):
         self.__controller = controller
-        self.__parent = parent
-        super().__init__(self.__parent.frame)
+        self.__base_window = parent
+        super().__init__(self.__base_window.frame)
         # configure styles for frames and labels
         style = ttk.Style()
         style.configure("profile.TFrame", background="#A3E3BE")
@@ -69,8 +69,11 @@ class CustomerDashboard(ttk.Frame):
         # update the idle tasks so the BookingSection can use actual width and height of the widgets in self
         self.update_idletasks()
         # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
-        BookingSection(self.base_frame, controller, self.__parent)
+        # booking_section = BookingSection(self.base_frame, controller, self.__parent)
+        # booking_section.pack()
+        # controller.add_view("booking_section", booking_section)
 
+        TripDetailsSection(self.base_frame, controller, self.__base_window).pack()
         self.pack()
 
 
@@ -87,8 +90,8 @@ def leave_frame(frame):
 
 
 class BookingSection(ttk.Frame):
-    def __init__(self, container, controller, parent):
-        self.__parent = parent
+    def __init__(self, container, controller, base_window):
+        self.__base_window = base_window
         style = ttk.Style()
         style.configure("map.TFrame", background="#ffffff")
         style.configure("panel.TFrame", background="#ace1af")
@@ -128,10 +131,11 @@ class BookingSection(ttk.Frame):
         search_btn.pack(side="right")
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 5)).pack()
-        map_style = ttk.Combobox(self.__panel_frame, values=["Normal View", "Satellite View"],
+        self.map_style = ttk.Combobox(self.__panel_frame, values=["Normal View", "Satellite View"],
                                  takefocus=0, state="readonly", font=("", 12, "bold", "italic"))
-        map_style.set("<<Choose Map View>>")
-        map_style.pack(fill=tk.X, padx=5)
+        self.map_style.set("<<Choose Map View>>")
+        self.map_style.pack(fill=tk.X, padx=5)
+        self.map_style.bind("<<ComboboxSelected>>", controller.change_map_tiles)
 
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 30)).pack()
@@ -179,16 +183,10 @@ class BookingSection(ttk.Frame):
         self.update_idletasks()
         self.map = tkmap.TkinterMapView(self.__map_frame, width=self.__map_width,
                                         height=self.__height, corner_radius=0)
-        # google normal tile server
-        self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
-        # google satellite tile server
-        # self.map.set_tile_server("https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
-
-        # self.map.set_tile_server("http://c.tile.stamen.com/watercolor/{z}/{x}/{y}.png")  # painting style
+        self.map.set_tile_server("http://c.tile.stamen.com/watercolor/{z}/{x}/{y}.png")  # painting style
 
         self.map.pack(fill=tk.BOTH)
 
-        self.pack()
 
     def __create_date_picker(self):
         self.__img_calendar = ImageTk.PhotoImage(Image.open("res/calendar_icon.png").resize((30, 30)))
@@ -233,20 +231,20 @@ class BookingSection(ttk.Frame):
                         **CustomerDashboard.button_args,
                         command=lambda *a: self.__pick_time(time_input.time(), top))
         btn.pack(side="bottom", fill=tk.X)
-        top.transient(self.__parent)
+        top.transient(self.__base_window)
         top.grab_set()
         top.focus_set()
 
     def __date_picker(self, _):
         top = tk.Toplevel(self.__panel_frame)
-        top.geometry(f'{int(self.__parent.get_width_pct(25))}x{int(self.__parent.get_height_pct(30))}')
+        top.geometry(f'{int(self.__base_window.get_width_pct(25))}x{int(self.__base_window.get_height_pct(30))}')
         top.title("Date Picker")
         calendar = Calendar(top, selectmode="day")
         calendar.pack(fill=tk.BOTH)
         btn = cw.Button(top, text="Select Date", **CustomerDashboard.button_args,
                         command=lambda *a: self.__pick_date(calendar.get_date(), top))
         btn.pack(side="bottom", fill=tk.X)
-        top.transient(self.__parent)
+        top.transient(self.__base_window)
         top.grab_set()
         top.focus_set()
 
@@ -261,5 +259,5 @@ class BookingSection(ttk.Frame):
 
 
 class TripDetailsSection(ttk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, container, controller, base_window):
+        super().__init__(container)

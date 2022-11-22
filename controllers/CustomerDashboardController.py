@@ -1,4 +1,6 @@
-from views.customer_dashboard import CustomerDashboard
+from views.customer_dashboard import CustomerDashboard, BookingSection, TripDetailsSection
+import threading
+import geocoder
 from views.base_window import BaseWindow
 
 
@@ -8,8 +10,33 @@ class CDashboardController:
         # get instance of the base window
         self.__window = base_window
         # self.frame = self.__window.frame
+        # store all the child views that the customer_dashboard creates
+        self.__child_views = {}
 
         # retrieve the user information from database
         user_info = dict()  # query database and store the result
         # instantiate Dashboard view
         self.customer_dashboard = CustomerDashboard(self, self.__window, user_info)
+        # update google map address after the widgets are visible
+        load = threading.Timer(1, self.__set_current_location)
+        load.start()
+
+    def add_view(self, view_name, view_object):
+        self.__child_views.update({view_name: view_object})
+
+    def __set_current_location(self):
+        geo = geocoder.ip("me")
+        coord = geo.latlng
+        self.__child_views["booking_section"].map.set_position(*coord)
+
+    def change_map_tiles(self, event):
+        # google normal tile server
+        # self.__child_views["booking_section"].update_idletasks()
+        tiles = self.__child_views["booking_section"].map_style.get()
+        normal_view = "https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga"
+        # google satellite tile server
+        satellite_view = "https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga"
+        if tiles == "Satellite View":
+            self.__child_views["booking_section"].map.set_tile_server(satellite_view, max_zoom=22)
+            return
+        self.__child_views["booking_section"].map.set_tile_server(normal_view, max_zoom=22)
