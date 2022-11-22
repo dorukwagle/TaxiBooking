@@ -126,6 +126,12 @@ class BookingSection(ttk.Frame):
                                font=("", 15, "bold", "italic"),
                                command=lambda *a: controller.search_map())
         search_btn.pack(side="right")
+        # add space
+        ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 5)).pack()
+        map_style = ttk.Combobox(self.__panel_frame, values=["Normal View", "Satellite View"],
+                                 takefocus=0, state="readonly", font=("", 12, "bold", "italic"))
+        map_style.set("<<Choose Map View>>")
+        map_style.pack(fill=tk.X, padx=5)
 
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 30)).pack()
@@ -171,7 +177,15 @@ class BookingSection(ttk.Frame):
 
         # ----------------------------Add Map-------------------------------------
         self.update_idletasks()
-        self.map = tkmap.TkinterMapView(self.__map_frame, width=self.__map_width, height=self.__height, corner_radius=0)
+        self.map = tkmap.TkinterMapView(self.__map_frame, width=self.__map_width,
+                                        height=self.__height, corner_radius=0)
+        # google normal tile server
+        self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
+        # google satellite tile server
+        # self.map.set_tile_server("https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
+
+        # self.map.set_tile_server("http://c.tile.stamen.com/watercolor/{z}/{x}/{y}.png")  # painting style
+
         self.map.pack(fill=tk.BOTH)
 
         self.pack()
