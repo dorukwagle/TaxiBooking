@@ -18,16 +18,21 @@ class CDashboardController:
         # instantiate Dashboard view
         self.customer_dashboard = CustomerDashboard(self, self.__window, user_info)
         # update google map address after the widgets are visible
-        load = threading.Timer(1, self.__set_current_location)
-        load.start()
+        # load = threading.Timer(1, self.__set_current_location)
+        # load.start()
 
     def add_view(self, view_name, view_object):
         self.__child_views.update({view_name: view_object})
 
     def __set_current_location(self):
+        print("doing")
         geo = geocoder.ip("me")
         coord = geo.latlng
+        # paths = (27.695525019273244, 85.28963164260394), (27.737999105602512, 85.37726477469697)
         self.__child_views["booking_section"].map.set_position(*coord)
+        # marker_2 = self.__child_views["booking_section"].map.set_marker(*paths[0], text="Brandenburger Tor")
+        # marker_3 = self.__child_views["booking_section"].map.set_marker(*paths[1], text="52.55, 13.4")
+        # self.__child_views["booking_section"].map.set_path([marker_2.position, marker_3.position, paths[0], paths[1]])
 
     def change_map_tiles(self, event):
         # google normal tile server

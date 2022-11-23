@@ -69,7 +69,7 @@ class CustomerDashboard(ttk.Frame):
         # update the idle tasks so the BookingSection can use actual width and height of the widgets in self
         self.update_idletasks()
         # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
-        # booking_section = BookingSection(self.base_frame, controller, self.__parent)
+        # booking_section = BookingSection(self.base_frame, controller, self.__base_window)
         # booking_section.pack()
         # controller.add_view("booking_section", booking_section)
 
@@ -260,4 +260,38 @@ class BookingSection(ttk.Frame):
 
 class TripDetailsSection(ttk.Frame):
     def __init__(self, container, controller, base_window):
+        self.__base_window = base_window
+        style = ttk.Style()
+        style.configure("trips.TFrame", background="#ffffff")
+        style.configure("control.TFrame", background="#ace1af")
+        style.configure("labelt.TLabel", background="#ace1af", font=("", 13, "italic"))
+        style.configure("pickert.TLabel", background="silver", font=("", 13, "italic"))
+        style.configure("pickert.TFrame", background="silver")
+        style.configure("hovert.TFrame", background="grey")
+        style.configure("hovert.TLabel", background="grey")
         super().__init__(container)
+        # define width of map and panel
+        self.__trips_width = container.winfo_width() * 0.77
+        self.__control_width = container.winfo_width() - self.__trips_width
+        self.__height = container.winfo_height()
+
+        self.__trips_frame = ttk.Frame(self, width=self.__trips_width, height=self.__height, style="trips.TFrame")
+        self.__trips_frame.propagate(False)
+
+        self.__trips_frame.grid(row=0, column=0, sticky=tk.W)
+
+        self.__control_frame = ttk.Frame(self, width=self.__control_width, height=self.__height,
+                                       style="control.TFrame")
+        self.__control_frame.propagate(False)
+        self.__control_frame.grid(row=0, column=1, sticky=tk.E)
+        # add space
+        ttk.Label(self.__control_frame, text="", style="user_info.TLabel", font=("", 10)).pack()
+        # add history filter box
+        self.history_filter = ttk.Combobox(self.__control_frame, values=["Active Trips", "Trips History"],
+                                      takefocus=0, state="readonly", font=("", 15, "bold", "italic"))
+        self.history_filter.current(0)
+        self.history_filter.pack(fill=tk.X, padx=5)
+
+
+
+
