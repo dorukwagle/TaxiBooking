@@ -166,7 +166,7 @@ class MDLabel(tk.Frame):
 
     def __init__(self, parent=None, **options):
         tk.Frame.__init__(self, parent, bg=options["sc"])  # sc = shadow color
-        self.label = tk.Label(self, text=options["text"], padx=15, pady=10, background="silver")
+        self.label = tk.Label(self, padx=15, pady=10, background="silver")
         self.label.pack(expand=1, fill="both", padx=(0, options["si"]), pady=(0, options["si"]))  # shadow intensity
 
 

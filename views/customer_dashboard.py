@@ -291,20 +291,39 @@ class TripDetailsSection(ttk.Frame):
                                            takefocus=0, state="readonly", font=("", 15, "bold", "italic"))
         self.history_filter.current(0)
         self.history_filter.pack(fill=tk.X, padx=5)
-
+        # add scroller
         scroll = ScrollFrame(self.__trips_frame)
         scroll.pack(fill=tk.BOTH, expand=True)
-        testf = ttk.Frame(scroll.frame, style="trips.TFrame")
-        testf.pack()
-        for i in range(200):
-            ttk.Label(testf, text=f"{i}: hello\nworld", state="trips.TLabel").pack()
+
+        # create frame to hold all the active bookings
+        self.active_holder = ttk.Frame(scroll, style="trips.TFrame")
+        # create frame to store all the history in a table
+        self.table_frame = ttk.Frame(scroll, style="trips.TFrame")
+
+
+    def create_table(self, model):
+        for i in range(len(model)):
+            # create a frame
+            for j in range(len(model[0])):
+                pass
+
+
+class CreateCard(tk.Frame):
+    def __init__(self, parent, **options):
+        super().__init__(parent, bg=options["sc"])  # sc = shadow color
+        self.label = tk.Label(self, padx=15, pady=10, background="silver")
+        self.label.pack(expand=1, fill="both", padx=(0, options["si"]), pady=(0, options["si"]))  # shadow intensity
 
 
 class ScrollFrame(ttk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, parent, bg="white"):
+        style = ttk.Style()
+        style.configure("scrf.TFrame", background=bg)
+        style.element_options("Vertical.TScrollbar.thumb")
+        style.configure("scr.Vertical.TScrollbar", troughcolor="gray", arrowcolor="black", background="white", bordercolor="white")
+        super().__init__(parent, style="scrf.TFrame")
         # create a canvas and scrollbar
-        scroller = ttk.Scrollbar(self, orient="vertical")
+        scroller = ttk.Scrollbar(self, orient="vertical", style="scr.Vertical.TScrollbar")
         scroller.pack(fill=tk.Y, side="right")
         canvas = tk.Canvas(self, bd=0, highlightthickness=0,
                            yscrollcommand=scroller.set)
@@ -317,7 +336,7 @@ class ScrollFrame(ttk.Frame):
         canvas.yview_moveto(0)
 
         # Create a frame inside the canvas which will be scrolled with it.
-        self.frame = frame = ttk.Frame(canvas)
+        self.frame = frame = ttk.Frame(canvas, style="scrf.TFrame")
         frame_id = canvas.create_window(0, 0, window=frame,
                                         anchor=tk.NW)
 
@@ -341,7 +360,6 @@ class ScrollFrame(ttk.Frame):
 
         # define what to do when the mouse wheel is rotated
         def __on_wheel(event):
-            print("scrolling", event.num, event.delta)
             scroll = 0
             if event.num == 5 or event.delta == -120:
                 scroll += 1
