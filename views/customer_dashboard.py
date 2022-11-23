@@ -132,7 +132,7 @@ class BookingSection(ttk.Frame):
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 5)).pack()
         self.map_style = ttk.Combobox(self.__panel_frame, values=["Normal View", "Satellite View"],
-                                 takefocus=0, state="readonly", font=("", 12, "bold", "italic"))
+                                      takefocus=0, state="readonly", font=("", 12, "bold", "italic"))
         self.map_style.set("<<Choose Map View>>")
         self.map_style.pack(fill=tk.X, padx=5)
         self.map_style.bind("<<ComboboxSelected>>", controller.change_map_tiles)
@@ -186,7 +186,6 @@ class BookingSection(ttk.Frame):
         self.map.set_tile_server("http://c.tile.stamen.com/watercolor/{z}/{x}/{y}.png")  # painting style
 
         self.map.pack(fill=tk.BOTH)
-
 
     def __create_date_picker(self):
         self.__img_calendar = ImageTk.PhotoImage(Image.open("res/calendar_icon.png").resize((30, 30)))
@@ -263,6 +262,7 @@ class TripDetailsSection(ttk.Frame):
         self.__base_window = base_window
         style = ttk.Style()
         style.configure("trips.TFrame", background="#ffffff")
+        style.configure("trips.TLabel", background="#ffffff")
         style.configure("control.TFrame", background="#ace1af")
         style.configure("labelt.TLabel", background="#ace1af", font=("", 13, "italic"))
         style.configure("pickert.TLabel", background="silver", font=("", 13, "italic"))
@@ -271,7 +271,7 @@ class TripDetailsSection(ttk.Frame):
         style.configure("hovert.TLabel", background="grey")
         super().__init__(container)
         # define width of map and panel
-        self.__trips_width = container.winfo_width() * 0.77
+        self.__trips_width = container.winfo_width() * 0.7
         self.__control_width = container.winfo_width() - self.__trips_width
         self.__height = container.winfo_height()
 
@@ -281,17 +281,84 @@ class TripDetailsSection(ttk.Frame):
         self.__trips_frame.grid(row=0, column=0, sticky=tk.W)
 
         self.__control_frame = ttk.Frame(self, width=self.__control_width, height=self.__height,
-                                       style="control.TFrame")
+                                         style="control.TFrame")
         self.__control_frame.propagate(False)
         self.__control_frame.grid(row=0, column=1, sticky=tk.E)
         # add space
         ttk.Label(self.__control_frame, text="", style="user_info.TLabel", font=("", 10)).pack()
         # add history filter box
         self.history_filter = ttk.Combobox(self.__control_frame, values=["Active Trips", "Trips History"],
-                                      takefocus=0, state="readonly", font=("", 15, "bold", "italic"))
+                                           takefocus=0, state="readonly", font=("", 15, "bold", "italic"))
         self.history_filter.current(0)
         self.history_filter.pack(fill=tk.X, padx=5)
 
+        scroll = ScrollFrame(self.__trips_frame)
+        scroll.pack(fill=tk.BOTH, expand=True)
+        testf = ttk.Frame(scroll.frame, style="trips.TFrame")
+        testf.pack()
+        import threading
+        def add_frame():
+            for i in range(10):
+                ttk.Label(testf, text=f"{i}: hello\nworld", state="trips.TLabel").pack()
+
+            add = threading.Timer(3, add_frame)
+            add.start()
+
+        add_frame()
 
 
+class ScrollFrame(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        # create a canvas and scrollbar
+        scroller = ttk.Scrollbar(self, orient="vertical")
+        scroller.pack(fill=tk.Y, side="right")
+        canvas = tk.Canvas(self, bd=0, highlightthickness=0,
+                           yscrollcommand=scroller.set)
+        canvas.pack(side="left", fill="both", expand=True)
+        scroller.config(command=canvas.yview)
+        # self.pack_propagate(False)
 
+        # Reset the view
+        canvas.xview_moveto(0)
+        canvas.yview_moveto(0)
+
+        # Create a frame inside the canvas which will be scrolled with it.
+        self.frame = frame = ttk.Frame(canvas)
+        frame_id = canvas.create_window(0, 0, window=frame,
+                                        anchor=tk.NW)
+
+        # update and change the size of the canvas and frame when the objects are added
+        def __config_frame(event):
+            # Update the scrollbars to match the size of the inner frame.
+            size = (frame.winfo_reqwidth(), frame.winfo_reqheight())
+            canvas.config(scrollregion="0 0 %s %s" % size)
+            if frame.winfo_reqwidth() != canvas.winfo_width():
+                # update the canvas width of the canvas to fit the frame
+                canvas.config(width=frame.winfo_reqwidth())
+
+        frame.bind('<Configure>', __config_frame)
+
+        def __config_canvas(event):
+            if frame.winfo_reqwidth() != canvas.winfo_width():
+                # update the frame size to the size of frame
+                canvas.itemconfigure(frame_id, width=canvas.winfo_width())
+
+        canvas.bind('<Configure>', __config_canvas)
+
+        # define what to do when the mouse wheel is rotated
+        def __on_wheel(event):
+            print("scrolling")
+            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+        # now check and start listening to mouse wheel event when the cursor is inside the scroll frame
+        def __start_scroll_event(event):
+            # start the mouse wheel listener
+            canvas.bind("<MouseWheel>", __on_wheel)
+
+        def __stop_scroll_event(event):
+            # stop the mouse wheel listener
+            canvas.unbind("<MouseWheel>")
+
+        frame.bind("<Enter>", __start_scroll_event)
+        frame.bind("<Leave>", __stop_scroll_event)
