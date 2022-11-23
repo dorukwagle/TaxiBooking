@@ -296,15 +296,8 @@ class TripDetailsSection(ttk.Frame):
         scroll.pack(fill=tk.BOTH, expand=True)
         testf = ttk.Frame(scroll.frame, style="trips.TFrame")
         testf.pack()
-        import threading
-        def add_frame():
-            for i in range(10):
-                ttk.Label(testf, text=f"{i}: hello\nworld", state="trips.TLabel").pack()
-
-            add = threading.Timer(3, add_frame)
-            add.start()
-
-        add_frame()
+        for i in range(200):
+            ttk.Label(testf, text=f"{i}: hello\nworld", state="trips.TLabel").pack()
 
 
 class ScrollFrame(ttk.Frame):
@@ -348,17 +341,25 @@ class ScrollFrame(ttk.Frame):
 
         # define what to do when the mouse wheel is rotated
         def __on_wheel(event):
-            print("scrolling")
-            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-
+            print("scrolling", event.num, event.delta)
+            scroll = 0
+            if event.num == 5 or event.delta == -120:
+                scroll += 1
+            else:
+                scroll -= 1
+            canvas.yview_scroll(scroll, "units")
         # now check and start listening to mouse wheel event when the cursor is inside the scroll frame
         def __start_scroll_event(event):
             # start the mouse wheel listener
-            canvas.bind("<MouseWheel>", __on_wheel)
+            canvas.bind_all("<MouseWheel>", __on_wheel)
+            canvas.bind_all("<Button-4>", __on_wheel)
+            canvas.bind_all("<Button-5>", __on_wheel)
 
         def __stop_scroll_event(event):
             # stop the mouse wheel listener
-            canvas.unbind("<MouseWheel>")
+            canvas.unbind_all("<MouseWheel>")
+            canvas.unbind_all("<Button-4>")
+            canvas.unbind_all("<Button-5>")
 
         frame.bind("<Enter>", __start_scroll_event)
         frame.bind("<Leave>", __stop_scroll_event)
