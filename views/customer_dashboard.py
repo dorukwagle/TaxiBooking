@@ -297,18 +297,15 @@ class TripDetailsSection(ttk.Frame):
 
         # create frame to hold all the active bookings
         self.active_holder = ttk.Frame(scroll, style="trips.TFrame")
-        # create frame to store all the history in a table
-        self.table_frame = ttk.Frame(scroll, style="trips.TFrame")
-        self.table_frame.pack()
+        # create a table to store all the history
+        self.history_table = Table(scroll.frame)
+        self.history_table.pack(fill=tk.BOTH, expand=True)
+        self.history_table.set_heading([ "name", "address", "phone"])
+        rows = []
         for i in range(100):
-            ttk.Label(self.table_frame, text=f"test{i}").pack()
-        # self.history_table.set_heading([ "name", "address", "phone"])
-        # rows = []
-        # for i in range(100):
-        #     rows.append([f"data {i+1},{j+1}" for j in range(3)])
-        # self.history_table.add_rows(rows)
-        # self.table_frame.pack()
-        # print(rows)
+            rows.append([f"data {i+1},{j+1}" for j in range(3)])
+        self.history_table.add_rows(rows)
+
 class Table(ttk.Frame):
     def __init__(self, parent, bgcolor="white",
                  headingcolor="silver",
@@ -321,12 +318,14 @@ class Table(ttk.Frame):
         self.__cols_length = 0
         style = ttk.Style()
         style.configure("tableCell.TLabel", fontcolor=fontcolor, background=bgcolor, font=("", fontsize))
+        style.configure("tableBg.TFrame", background=bgcolor)
+        style.configure("headingBg.TFrame", background=headingcolor)
         style.configure("tableCellHover.TLabel", fontcolor=fontcolor, background=hovercolor, font=("", fontsize))
         style.configure("tableHeading.TLabel", fontcolor=fontcolor, background=headingcolor,
                         font=("", heading_fontsize, "bold"))
         style.configure("tableRow.TFrame")
-        super().__init__(parent)
-        self.__heading = ttk.Frame(self)
+        super().__init__(parent, style="tableBg.TFrame")
+        self.__heading = ttk.Frame(self, style="headingBg.TFrame")
         self.__heading.pack(fill=tk.X)
 
     # set heading of the table
@@ -335,7 +334,8 @@ class Table(ttk.Frame):
         self.__cols_length = len(heading)
 
         for i in range(self.__cols_length):
-            ttk.Label(self.__heading, text=heading[i], style="tableHeading.TLabel").pack(side="left", fill=tk.X)
+            ttk.Label(self.__heading, text=heading[i], style="tableHeading.TLabel", relief="sunken")\
+                .pack(side="left", fill=tk.X)
 
     # add rows data to the table
     def add_rows(self, data: list[list]):
@@ -344,10 +344,8 @@ class Table(ttk.Frame):
 
         for i in range(len(data)):
             # create a frame
-            frame = ttk.Frame(self)
+            frame = ttk.Frame(self, style="")
             frame.pack(fill=tk.X)
-            frame.rowconfigure(0)
-            frame.columnconfigure(self.__cols_length)
             for j in range(self.__cols_length):
                 # create label and add to frame
                 ttk.Label(frame, text=data[i][j], style="tableCell.TLabel", relief="sunken").pack(side="left")
@@ -365,6 +363,7 @@ class ScrollFrame(ttk.Frame):
     def __init__(self, parent, bg="white"):
         style = ttk.Style()
         style.configure("scrf.TFrame", background=bg)
+        style.configure("scrf.TCanvas", background=bg)
         style.element_options("Vertical.TScrollbar.thumb")
         style.configure("scr.Vertical.TScrollbar", troughcolor="gray", arrowcolor="black", background="white",
                         bordercolor="white")
@@ -373,7 +372,7 @@ class ScrollFrame(ttk.Frame):
         scroller = ttk.Scrollbar(self, orient="vertical", style="scr.Vertical.TScrollbar")
         scroller.pack(fill=tk.Y, side="right")
         canvas = tk.Canvas(self, bd=0, highlightthickness=0,
-                           yscrollcommand=scroller.set)
+                           yscrollcommand=scroller.set, background=bg)
         canvas.pack(side="left", fill="both", expand=True)
         scroller.config(command=canvas.yview)
         # self.pack_propagate(False)
