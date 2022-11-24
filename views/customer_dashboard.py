@@ -299,16 +299,62 @@ class TripDetailsSection(ttk.Frame):
         self.active_holder = ttk.Frame(scroll, style="trips.TFrame")
         # create frame to store all the history in a table
         self.table_frame = ttk.Frame(scroll, style="trips.TFrame")
+        self.table_frame.pack()
+        for i in range(100):
+            ttk.Label(self.table_frame, text=f"test{i}").pack()
+        # self.history_table.set_heading([ "name", "address", "phone"])
+        # rows = []
+        # for i in range(100):
+        #     rows.append([f"data {i+1},{j+1}" for j in range(3)])
+        # self.history_table.add_rows(rows)
+        # self.table_frame.pack()
+        # print(rows)
+class Table(ttk.Frame):
+    def __init__(self, parent, bgcolor="white",
+                 headingcolor="silver",
+                 fontcolor="black",
+                 hovercolor="silver",
+                 heading_fontsize=12,
+                 fontsize=10,):
+        # check if the heading is set or not
+        self.__heading_set = False
+        self.__cols_length = 0
+        style = ttk.Style()
+        style.configure("tableCell.TLabel", fontcolor=fontcolor, background=bgcolor, font=("", fontsize))
+        style.configure("tableCellHover.TLabel", fontcolor=fontcolor, background=hovercolor, font=("", fontsize))
+        style.configure("tableHeading.TLabel", fontcolor=fontcolor, background=headingcolor,
+                        font=("", heading_fontsize, "bold"))
+        style.configure("tableRow.TFrame")
+        super().__init__(parent)
+        self.__heading = ttk.Frame(self)
+        self.__heading.pack(fill=tk.X)
 
+    # set heading of the table
+    def set_heading(self, heading: list):
+        self.__heading_set = True
+        self.__cols_length = len(heading)
 
-    def create_table(self, model):
-        for i in range(len(model)):
+        for i in range(self.__cols_length):
+            ttk.Label(self.__heading, text=heading[i], style="tableHeading.TLabel").pack(side="left", fill=tk.X)
+
+    # add rows data to the table
+    def add_rows(self, data: list[list]):
+        if not self.__heading_set:
+            raise Exception("Table Heading Not Defined, set table heading first...")
+
+        for i in range(len(data)):
             # create a frame
-            for j in range(len(model[0])):
-                pass
+            frame = ttk.Frame(self)
+            frame.pack(fill=tk.X)
+            frame.rowconfigure(0)
+            frame.columnconfigure(self.__cols_length)
+            for j in range(self.__cols_length):
+                # create label and add to frame
+                ttk.Label(frame, text=data[i][j], style="tableCell.TLabel", relief="sunken").pack(side="left")
 
 
-class CreateCard(tk.Frame):
+
+class Card(tk.Frame):
     def __init__(self, parent, **options):
         super().__init__(parent, bg=options["sc"])  # sc = shadow color
         self.label = tk.Label(self, padx=15, pady=10, background="silver")
@@ -320,7 +366,8 @@ class ScrollFrame(ttk.Frame):
         style = ttk.Style()
         style.configure("scrf.TFrame", background=bg)
         style.element_options("Vertical.TScrollbar.thumb")
-        style.configure("scr.Vertical.TScrollbar", troughcolor="gray", arrowcolor="black", background="white", bordercolor="white")
+        style.configure("scr.Vertical.TScrollbar", troughcolor="gray", arrowcolor="black", background="white",
+                        bordercolor="white")
         super().__init__(parent, style="scrf.TFrame")
         # create a canvas and scrollbar
         scroller = ttk.Scrollbar(self, orient="vertical", style="scr.Vertical.TScrollbar")
@@ -366,6 +413,7 @@ class ScrollFrame(ttk.Frame):
             else:
                 scroll -= 1
             canvas.yview_scroll(scroll, "units")
+
         # now check and start listening to mouse wheel event when the cursor is inside the scroll frame
         def __start_scroll_event(event):
             # start the mouse wheel listener
