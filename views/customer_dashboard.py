@@ -296,26 +296,38 @@ class TripDetailsSection(ttk.Frame):
         scroll.pack(fill=tk.BOTH, expand=True)
 
         # create frame to hold all the active bookings
-        self.active_holder = ttk.Frame(scroll, style="trips.TFrame")
+        self.active_holder = ttk.Frame(scroll.frame, style="trips.TFrame")
         # create a table to store all the history
-        self.history_table = Table(scroll.frame)
+        self.history_table = Table(scroll.frame, width=self.__trips_width, fontsize=15)
         self.history_table.pack(fill=tk.BOTH, expand=True)
-        self.history_table.set_heading([ "name", "address", "phone"])
+        self.history_table.set_columns_width({0: 80, 1: 180})
+        self.history_table.set_row_height(50)
+        self.history_table.set_heading(["id", "name", "address", "phone", "mobile", "permanent"])
         rows = []
         for i in range(100):
-            rows.append([f"data {i+1},{j+1}" for j in range(3)])
+            rows.append([f"data {i ** i},{j ** j}" for j in range(6)])
         self.history_table.add_rows(rows)
 
+
 class Table(ttk.Frame):
-    def __init__(self, parent, bgcolor="white",
+    def __init__(self, parent,
+                 bgcolor="white",
                  headingcolor="silver",
                  fontcolor="black",
-                 hovercolor="silver",
+                 hovercolor="#bfbfbf",
                  heading_fontsize=12,
-                 fontsize=10,):
+                 fontsize=10,
+                 width=0):
         # check if the heading is set or not
+        self.__row_refer = []
         self.__heading_set = False
         self.__cols_length = 0
+        self.__parent = parent
+        self.__column_config = tuple()
+        self.__width = width
+        self.__row_height = 30
+        self.__col_width = width  # initialize to width, assuming there is only one column
+        self.__cols_width = dict()  # define to hold user defined custom width of each column
         style = ttk.Style()
         style.configure("tableCell.TLabel", fontcolor=fontcolor, background=bgcolor, font=("", fontsize))
         style.configure("tableBg.TFrame", background=bgcolor)
@@ -332,11 +344,29 @@ class Table(ttk.Frame):
     def set_heading(self, heading: list):
         self.__heading_set = True
         self.__cols_length = len(heading)
-
+        self.__col_width = int(self.__width / (len(heading) - len(self.__cols_width)))
         for i in range(self.__cols_length):
-            ttk.Label(self.__heading, text=heading[i], style="tableHeading.TLabel", relief="sunken")\
-                .pack(side="left", fill=tk.X)
+            cell_frame = ttk.Frame(self.__heading, width=self.__cols_width.get(i, self.__col_width),
+                                   height=self.__row_height + 5)
+            cell_frame.pack_propagate(False)
+            ttk.Label(cell_frame, text=heading[i], style="tableHeading.TLabel",
+                      relief="raised", compound="right") \
+                .pack(fill=tk.BOTH, expand=True)
+            cell_frame.pack(side="left")
 
+    # method to configure the width of individual columns
+    def set_columns_width(self, cols_width: dict):
+        # arrange other columns width
+        for k, v in cols_width.items():
+            self.__width -= v
+        self.__cols_width = cols_width
+
+    # method to set rows height
+    def set_row_height(self, height):
+        self.__row_height = height
+
+    # configure column width
+    # def column_width(self):
     # add rows data to the table
     def add_rows(self, data: list[list]):
         if not self.__heading_set:
@@ -344,12 +374,33 @@ class Table(ttk.Frame):
 
         for i in range(len(data)):
             # create a frame
-            frame = ttk.Frame(self, style="")
-            frame.pack(fill=tk.X)
+            self.__row_refer.append(ttk.Frame(self, style=""))
+            row_index = self.__row_refer.index(self.__row_refer[-1])
+            self.__row_refer[-1].pack(fill=tk.X)
+            self.__row_refer[-1].bind("<Enter>", lambda e, index=row_index: self.__row_hover(index))
+            self.__row_refer[-1].bind("<Leave>", lambda e, index=row_index: self.__row_normal(index))
             for j in range(self.__cols_length):
+                cell_frame = ttk.Frame(self.__row_refer[-1],
+                                       width=self.__cols_width.get(j, self.__col_width), height=self.__row_height)
+                cell_frame.pack_propagate(False)
                 # create label and add to frame
-                ttk.Label(frame, text=data[i][j], style="tableCell.TLabel", relief="sunken").pack(side="left")
+                ttk.Label(cell_frame, text=data[i][j], cursor="hand2", width=self.__col_width,
+                          style="tableCell.TLabel", relief="sunken").pack(fill=tk.BOTH, expand=True)
+                cell_frame.pack(side="left")
 
+    def __row_hover(self, row_index):
+        row = self.__row_refer[row_index]
+        for child in row.winfo_children():
+            label = child.winfo_children()[0]
+            label.configure(style="tableCellHover.TLabel")
+        # self.update_idletasks()
+
+    def __row_normal(self, row_index):
+        row = self.__row_refer[row_index]
+        for child in row.winfo_children():
+            label = child.winfo_children()[0]
+            label.configure(style="tableCell.TLabel")
+        # self.update_idletasks()
 
 
 class Card(tk.Frame):
