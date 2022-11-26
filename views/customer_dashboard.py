@@ -311,7 +311,7 @@ class TripDetailsSection(ttk.Frame):
 
         # self.history_table.pack(fill=tk.BOTH, expand=True)
         self.active_holder.pack(fill=tk.BOTH, expand=True)
-        card = CreateCard(self.active_holder, self.__trips_width, [[], [], []])
+        card = CreateCard(self.active_holder, self.__trips_width, [[], [], [], [], []], height=250)
         card.pack()
         card.add_card([])
 
@@ -340,9 +340,41 @@ class CreateCard(tk.Frame):
             # create frame to hold all the elements in the card
             frame = tk.Frame(self.__card_list[-1], width=self.__width-40, height=self.__height-35, background="#ebf2f2")
             frame.pack_propagate(False)
+            # create a frame to hold labels
+            frame_l = tk.Frame(frame, background="#ebf2f2")
+            frame_l.grid_propagate(False)
+            frame_l.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+            # create a frame to hold buttons
+            frame_b = tk.Frame(frame, background="#ebf2f2")
+            frame_b.pack_propagate(False)
+            frame_b.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
             cnv.create_window(20, 15, window=frame, anchor=tk.NW)
+            # create labels to add in frame
+            font = ("", 13, "bold", "italic")
+            tk.Label(frame_l, text="TripID: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+                .grid(columnspan=5, row=0, column=0)
+            tk.Label(frame_l, text="DateTime: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+                .grid(row=0, column=5, columnspan=5)
+            tk.Label(frame_l, text="From: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+                .grid(row=1, column=0, columnspan=5)
+            tk.Label(frame_l, text="To: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+                .grid(row=1, column=5, columnspan=5)
+            tk.Label(frame_l, text="Status: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+                .grid(row=2, column=0, columnspan=5)
+
+            cw.Button(frame_b, text="Payment", font=font,
+                      **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"}
+                      ).pack(side=tk.RIGHT, anchor=tk.SE, padx=5)
+            cw.Button(frame_b, text="Cancel", font=font,
+                      **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"}
+                      ).pack(side=tk.RIGHT, anchor=tk.SE, padx=5)
             self.__card_list[-1].pack()
 
     # add a new card
     def add_card(self, data):
+        # add cards individually from here
+        # upcoming bookings will have <cancel> and <details> button
+        # completed bookings will have <details> and <payment> button
+        # event binding will send back the id of the booking to the function
         self.__create_cards([data])
