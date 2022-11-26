@@ -1,5 +1,5 @@
-psycopg2
 pillow
 tkcalendar
 tktimepicker
 tkintermapview
+psycopg2

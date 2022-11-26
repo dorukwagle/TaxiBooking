@@ -1,5 +1,7 @@
 from tkinter import ttk
+import tkinter as tk
 from tkinter import StringVar
+from typing import List
 
 
 class InputBox(ttk.Entry):
@@ -100,3 +102,168 @@ class Button(ttk.Button):
 
         self.__style.configure(self.__style_name, foreground=self.__fg, background=self.__bg, font=font)
         super().__init__(container, text=text, style=self.__style_name, **kwargs)
+
+
+class Table(ttk.Frame):
+    def __init__(self, parent, width,
+                 bgcolor="white",
+                 headingcolor="silver",
+                 fontcolor="black",
+                 hovercolor="#bfbfbf",
+                 heading_fontsize=12,
+                 fontsize=10,
+                 ):
+        # check if the heading is set or not
+        self.__row_refer = []
+        self.__heading_set = False
+        self.__cols_length = 0
+        self.__parent = parent
+        self.__column_config = tuple()
+        self.__width = width
+        self.__row_height = 30
+        self.__col_width = width  # initialize to width, assuming there is only one column
+        self.__cols_width = dict()  # define to hold user defined custom width of each column
+        style = ttk.Style()
+        style.configure("tableCell.TLabel", fontcolor=fontcolor, background=bgcolor, font=("", fontsize))
+        style.configure("tableBg.TFrame", background=bgcolor)
+        style.configure("headingBg.TFrame", background=headingcolor)
+        style.configure("tableCellHover.TLabel", fontcolor=fontcolor, background=hovercolor, font=("", fontsize))
+        style.configure("tableHeading.TLabel", fontcolor=fontcolor, background=headingcolor,
+                        font=("", heading_fontsize, "bold"))
+        style.configure("tableRow.TFrame")
+        super().__init__(parent, style="tableBg.TFrame")
+        self.__heading = ttk.Frame(self, style="headingBg.TFrame")
+        self.__heading.pack(fill=tk.X)
+
+    # set heading of the table
+    def set_heading(self, heading: list):
+        self.__heading_set = True
+        self.__cols_length = len(heading)
+        self.__col_width = int(self.__width / (len(heading) - len(self.__cols_width)))
+        for i in range(self.__cols_length):
+            cell_frame = ttk.Frame(self.__heading, width=self.__cols_width.get(i, self.__col_width),
+                                   height=self.__row_height + 5)
+            cell_frame.pack_propagate(False)
+            ttk.Label(cell_frame, text=heading[i], style="tableHeading.TLabel",
+                      relief="raised", compound="right") \
+                .pack(fill=tk.BOTH, expand=True)
+            cell_frame.pack(side="left")
+
+    # method to configure the width of individual columns
+    def set_columns_width(self, cols_width: dict):
+        # arrange other columns width
+        for k, v in cols_width.items():
+            self.__width -= v
+        self.__cols_width = cols_width
+
+    # method to set rows height
+    def set_row_height(self, height):
+        self.__row_height = height
+
+    # configure column width
+    # def column_width(self):
+    # add rows data to the table
+    def add_rows(self, data: List[list]):
+        if not self.__heading_set:
+            raise Exception("Table Heading Not Defined, set table heading first...")
+
+        for i in range(len(data)):
+            # create a frame
+            self.__row_refer.append(ttk.Frame(self, style=""))
+            row_index = self.__row_refer.index(self.__row_refer[-1])
+            self.__row_refer[-1].pack(fill=tk.X)
+            self.__row_refer[-1].bind("<Enter>", lambda e, index=row_index: self.__row_hover(index))
+            self.__row_refer[-1].bind("<Leave>", lambda e, index=row_index: self.__row_normal(index))
+            for j in range(self.__cols_length):
+                cell_frame = ttk.Frame(self.__row_refer[-1],
+                                       width=self.__cols_width.get(j, self.__col_width), height=self.__row_height)
+                cell_frame.pack_propagate(False)
+                # create label and add to frame
+                ttk.Label(cell_frame, text=data[i][j], cursor="hand2", width=self.__col_width,
+                          style="tableCell.TLabel", relief="sunken").pack(fill=tk.BOTH, expand=True)
+                cell_frame.pack(side="left")
+
+    def __row_hover(self, row_index):
+        row = self.__row_refer[row_index]
+        for child in row.winfo_children():
+            label = child.winfo_children()[0]
+            label.configure(style="tableCellHover.TLabel")
+        # self.update_idletasks()
+
+    def __row_normal(self, row_index):
+        row = self.__row_refer[row_index]
+        for child in row.winfo_children():
+            label = child.winfo_children()[0]
+            label.configure(style="tableCell.TLabel")
+        # self.update_idletasks()
+
+
+class ScrollFrame(ttk.Frame):
+    def __init__(self, parent, bg="white"):
+        style = ttk.Style()
+        style.configure("scrf.TFrame", background=bg)
+        style.configure("scrf.TCanvas", background=bg)
+        style.element_options("Vertical.TScrollbar.thumb")
+        style.configure("scr.Vertical.TScrollbar", troughcolor="gray", arrowcolor="black", background="white",
+                        bordercolor="white")
+        super().__init__(parent, style="scrf.TFrame")
+        # create a canvas and scrollbar
+        scroller = ttk.Scrollbar(self, orient="vertical", style="scr.Vertical.TScrollbar")
+        scroller.pack(fill=tk.Y, side="right")
+        canvas = tk.Canvas(self, bd=0, highlightthickness=0,
+                           yscrollcommand=scroller.set, background=bg)
+        canvas.pack(side="left", fill="both", expand=True)
+        scroller.config(command=canvas.yview)
+        # self.pack_propagate(False)
+
+        # Reset the view
+        canvas.xview_moveto(0)
+        canvas.yview_moveto(0)
+
+        # Create a frame inside the canvas which will be scrolled with it.
+        self.frame = frame = ttk.Frame(canvas, style="scrf.TFrame")
+        frame_id = canvas.create_window(0, 0, window=frame,
+                                        anchor=tk.NW)
+
+        # update and change the size of the canvas and frame when the objects are added
+        def __config_frame(event):
+            # Update the scrollbars to match the size of the inner frame.
+            size = (frame.winfo_reqwidth(), frame.winfo_reqheight())
+            canvas.config(scrollregion="0 0 %s %s" % size)
+            if frame.winfo_reqwidth() != canvas.winfo_width():
+                # update the canvas width of the canvas to fit the frame
+                canvas.config(width=frame.winfo_reqwidth())
+
+        frame.bind('<Configure>', __config_frame)
+
+        def __config_canvas(event):
+            if frame.winfo_reqwidth() != canvas.winfo_width():
+                # update the frame size to the size of frame
+                canvas.itemconfigure(frame_id, width=canvas.winfo_width())
+
+        canvas.bind('<Configure>', __config_canvas)
+
+        # define what to do when the mouse wheel is rotated
+        def __on_wheel(event):
+            scroll = 0
+            if event.num == 5 or event.delta == -120:
+                scroll += 1
+            else:
+                scroll -= 1
+            canvas.yview_scroll(scroll, "units")
+
+        # now check and start listening to mouse wheel event when the cursor is inside the scroll frame
+        def __start_scroll_event(event):
+            # start the mouse wheel listener
+            canvas.bind_all("<MouseWheel>", __on_wheel)
+            canvas.bind_all("<Button-4>", __on_wheel)
+            canvas.bind_all("<Button-5>", __on_wheel)
+
+        def __stop_scroll_event(event):
+            # stop the mouse wheel listener
+            canvas.unbind_all("<MouseWheel>")
+            canvas.unbind_all("<Button-4>")
+            canvas.unbind_all("<Button-5>")
+
+        frame.bind("<Enter>", __start_scroll_event)
+        frame.bind("<Leave>", __stop_scroll_event)
