@@ -8,3 +8,4 @@ class RegistrationController:
         self.__window = basewindow
         # instantiate Registration view
         self.registration_view = RegistrationPage(self, self.__window)
+        # self.registration_view = LoginPageReg(self, self.__window)

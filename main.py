@@ -9,6 +9,6 @@ if __name__ == '__main__':
     # instantiate BaseWindow and pass it to the controller object
     base_window = BaseWindow()
     # LoginController(base_window)
-    # RegistrationController(base_window)
-    CDashboardController(base_window)
+    RegistrationController(base_window)
+    # CDashboardController(base_window)
     base_window.mainloop()

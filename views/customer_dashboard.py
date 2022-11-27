@@ -327,6 +327,7 @@ class TripDetailsSection(ttk.Frame):
         self.active_holder.pack_forget()
         self.history_table.pack(fill=tk.BOTH, expand=True)
 
+
 class CreateCard(tk.Frame):
     def __init__(self, parent, width, data,
                  height=0, space=2):

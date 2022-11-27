@@ -5,19 +5,20 @@ from typing import List
 
 
 class InputBox(ttk.Entry):
-    def __init__(self, container, text="", placeholder="", input_type="", show="*", takefocus=0, font_color="", placeholder_color="", **kw):
+    def __init__(self, container, text="", placeholder="", input_type="", show="*", font_color="", placeholder_color="", **kw):
         self.__place_color = "#D3D3D3" if not placeholder_color else placeholder_color
         self.__foreground = font_color if font_color else "#000000"
         self.__show = show if input_type == "password" else ''
         self.__holder = StringVar(container)
         self.__placeholder = placeholder
-        super().__init__(container, textvariable=self.__holder, takefocus=takefocus, **kw)
+        super().__init__(container, textvariable=self.__holder, takefocus=0, **kw)
         self.__text = self.__holder.get()
 
         # add action listener
         self.bind("<Key>", self.__on_key)
         self.bind("<KeyRelease>", self.__on_key_release, add="+")
         self.bind("<FocusIn>", self.__on_focus, add="+")
+        # self.bind("<Tab>", self.__on_tab, add="+")
 
         # if there is placeholder add it
         if self.__placeholder:
@@ -61,6 +62,9 @@ class InputBox(ttk.Entry):
             return
         # if there is no placeholder then just update the __text with the __holder
         self.__text = self.__holder.get()
+
+    def __on_tab(self, e):
+        self.focus_set()
 
     # on focus, place the cursor at the beginning of the placeholder else if there is text return
     def __on_focus(self, _):

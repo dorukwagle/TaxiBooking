@@ -24,11 +24,11 @@ class RegistrationPage(ttk.Frame):
         self.__canvas = tk.Canvas(self, width=parent.get_width_pct(100), height=parent.get_height_pct(100))
         self.__canvas.pack()
         # create images
-        self.__bg_img = ImageTk.PhotoImage(Image.open(Path("res/taxi2.jpg")).resize(
+        bg_img = ImageTk.PhotoImage(Image.open(Path("res/taxi2.jpg")).resize(
             (int(self.__parent.get_width_pct(100)), int(self.__parent.get_height_pct(100))), Image.ANTIALIAS))
 
         # add background image to canvas
-        self.__bg_img = self.__canvas.create_image(0, 0, anchor=tk.NW, image=self.__bg_img)
+        self.__bg_img = self.__canvas.create_image(0, 0, anchor=tk.NW, image=bg_img)
 
         # frame to hold all the elements
         base_frame = ttk.Frame(self, style="new.TFrame")
@@ -51,6 +51,8 @@ class RegistrationPage(ttk.Frame):
         # add registration page to the base frame
         CustomerRegistration(base_frame).pack()
         self.pack()
+        # start the event listener
+        parent.mainloop()
 
     def create_image(self, path):
         img = ImageTk.PhotoImage(Image.open(Path(path)).resize(
@@ -67,30 +69,30 @@ class CustomerRegistration(ttk.Frame):
         super().__init__(container, style="TFrame", padding=25)
 
         # create form elements
-        self.username = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
+        self.full_name = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
         # self.username.bind("<Tab>", self.tab_handler)
-        self.username.pack()
+        self.full_name.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
         self.gender = ttk.Combobox(self, values=["Male", "Female"], background="white", font=("", 15), state="readonly")
         self.gender.set("<<Select Gender>>")
         self.gender.pack(expand=1, fill="both")
-        self.gender.bind("<<ComboboxSelected>>", lambda event: combo_select(self.gender))
+        self.gender.bind("<<ComboboxSelected>>", lambda event: combo_select(self.gender) )
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
-        self.username = cw.InputBox(self, placeholder="Email Address", placeholder_color="#c3c3c3", font=self.font)
-        self.username.pack()
+        self.email_address = cw.InputBox(self, placeholder="Email Address", placeholder_color="#c3c3c3", font=self.font)
+        self.email_address.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
-        self.username = cw.InputBox(self, placeholder="Address", placeholder_color="#c3c3c3", font=self.font)
-        self.username.pack()
+        self.address = cw.InputBox(self, placeholder="Address", placeholder_color="#c3c3c3", font=self.font)
+        self.address.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
-        self.username = cw.InputBox(self, placeholder="Telephone", placeholder_color="#c3c3c3", font=self.font)
-        self.username.pack()
+        self.telephone = cw.InputBox(self, placeholder="Telephone", placeholder_color="#c3c3c3", font=self.font)
+        self.telephone.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
         self.payment_method = ttk.Combobox(self, values=["Credit Card", "Bank Transfer", "Cash"], background="white",
@@ -133,8 +135,8 @@ class DriverRegistration(ttk.Frame):
         super().__init__(container, style="TFrame", padding=25)
 
         # create form elements
-        self.username = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
-        self.username.pack()
+        self.full_name = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
+        self.full_name.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
@@ -145,18 +147,18 @@ class DriverRegistration(ttk.Frame):
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
-        self.username = cw.InputBox(self, placeholder="Email Address", placeholder_color="#c3c3c3", font=self.font)
-        self.username.pack()
+        self.email_address = cw.InputBox(self, placeholder="Email Address", placeholder_color="#c3c3c3", font=self.font)
+        self.email_address.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
-        self.username = cw.InputBox(self, placeholder="Address", placeholder_color="#c3c3c3", font=self.font)
-        self.username.pack()
+        self.address = cw.InputBox(self, placeholder="Address", placeholder_color="#c3c3c3", font=self.font)
+        self.address.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
-        self.username = cw.InputBox(self, placeholder="License ID", placeholder_color="#c3c3c3", font=self.font)
-        self.username.pack()
+        self.license_id = cw.InputBox(self, placeholder="License ID", placeholder_color="#c3c3c3", font=self.font)
+        self.license_id.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
