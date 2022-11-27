@@ -210,7 +210,7 @@ class ScrollFrame(ttk.Frame):
         # create a canvas and scrollbar
         scroller = ttk.Scrollbar(self, orient="vertical", style="scr.Vertical.TScrollbar")
         scroller.pack(fill=tk.Y, side="right")
-        canvas = tk.Canvas(self, bd=0, highlightthickness=0,
+        self.__c = canvas = tk.Canvas(self, bd=0, highlightthickness=0,
                            yscrollcommand=scroller.set, background=bg)
         canvas.pack(side="left", fill="both", expand=True)
         scroller.config(command=canvas.yview)
@@ -267,3 +267,6 @@ class ScrollFrame(ttk.Frame):
 
         frame.bind("<Enter>", __start_scroll_event)
         frame.bind("<Leave>", __stop_scroll_event)
+
+    def reset_view(self):
+        self.__c.yview_moveto(0)

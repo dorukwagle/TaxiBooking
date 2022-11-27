@@ -24,11 +24,11 @@ class RegistrationPage(ttk.Frame):
         self.__canvas = tk.Canvas(self, width=parent.get_width_pct(100), height=parent.get_height_pct(100))
         self.__canvas.pack()
         # create images
-        bg_img = ImageTk.PhotoImage(Image.open(Path("res/taxi2.jpg")).resize(
+        self.__bg_img = ImageTk.PhotoImage(Image.open(Path("res/taxi2.jpg")).resize(
             (int(self.__parent.get_width_pct(100)), int(self.__parent.get_height_pct(100))), Image.ANTIALIAS))
 
         # add background image to canvas
-        self.__bg_img = self.__canvas.create_image(0, 0, anchor=tk.NW, image=bg_img)
+        self.__bg_img = self.__canvas.create_image(0, 0, anchor=tk.NW, image=self.__bg_img)
 
         # frame to hold all the elements
         base_frame = ttk.Frame(self, style="new.TFrame")
@@ -51,8 +51,6 @@ class RegistrationPage(ttk.Frame):
         # add registration page to the base frame
         CustomerRegistration(base_frame).pack()
         self.pack()
-        # start the event listener
-        parent.mainloop()
 
     def create_image(self, path):
         img = ImageTk.PhotoImage(Image.open(Path(path)).resize(

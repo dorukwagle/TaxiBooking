@@ -19,10 +19,10 @@ class LoginPage(ttk.Frame):
         canvas = tk.Canvas(self, width=parent.get_width_pct(100), height=parent.get_height_pct(100))
         canvas.pack()
         # create image
-        img = ImageTk.PhotoImage(Image.open(Path("res/taxi1.jpg")).resize(
+        self.__img = ImageTk.PhotoImage(Image.open(Path("res/taxi1.jpg")).resize(
             (int(parent.get_width_pct(100)), int(parent.get_height_pct(100))), Image.ANTIALIAS))
         # add image to canvas
-        canvas.create_image(0, 0, anchor=tk.NW, image=img)
+        canvas.create_image(0, 0, anchor=tk.NW, image=self.__img)
 
         # frame to hold all the elements
         base_frame = ttk.Frame(self, style="new.TFrame")
@@ -64,5 +64,3 @@ class LoginPage(ttk.Frame):
                   fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()
 
         self.pack()
-        # start the event listener
-        parent.mainloop()

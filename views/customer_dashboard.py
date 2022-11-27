@@ -292,29 +292,40 @@ class TripDetailsSection(ttk.Frame):
                                            takefocus=0, state="readonly", font=("", 15, "bold", "italic"))
         self.history_filter.current(0)
         self.history_filter.pack(fill=tk.X, padx=5)
+        self.history_filter.bind("<<ComboboxSelected>>", self.handle_combo)
         # add scroller
-        scroll = cw.ScrollFrame(self.__trips_frame)
+        self.__s = scroll = cw.ScrollFrame(self.__trips_frame)
         scroll.pack(fill=tk.BOTH, expand=True)
 
         # create frame to hold all the active bookings
         self.active_holder = ttk.Frame(scroll.frame, style="trips.TFrame")
         # create a table to store all the history
-        # self.history_table = cw.Table(scroll.frame, width=self.__trips_width, fontsize=15)
-        # self.history_table.set_columns_width({0: 80, 1: 180})
-        # self.history_table.set_row_height(50)
-        # self.history_table.set_heading(["id", "name", "address", "phone", "mobile", "permanent"])
-        # rows = []
-        # for i in range(100):
-        #     rows.append([f"data {i ** 4},{j ** 4}" for j in range(6)])
-        #     # self.history_table.add_rows([[f"data {i ** 4},{j ** 4}" for j in range(6)]])
-        # self.history_table.add_rows(rows)
+        self.history_table = cw.Table(scroll.frame, width=self.__trips_width, fontsize=15)
+        self.history_table.set_columns_width({0: 80, 1: 180})
+        self.history_table.set_row_height(50)
+        self.history_table.set_heading(["id", "name", "address", "phone", "mobile", "permanent"])
+        rows = []
+        for i in range(100):
+            rows.append([f"data {i ** 4},{j ** 4}" for j in range(6)])
+            # self.history_table.add_rows([[f"data {i ** 4},{j ** 4}" for j in range(6)]])
+        self.history_table.add_rows(rows)
 
         # self.history_table.pack(fill=tk.BOTH, expand=True)
         self.active_holder.pack(fill=tk.BOTH, expand=True)
+
         card = CreateCard(self.active_holder, self.__trips_width, [[], [], [], [], []], height=250)
         card.pack()
         card.add_card([])
 
+    def handle_combo(self, _):
+        if self.history_filter.get() == "Active Trips":
+            self.__s.reset_view()
+            self.history_table.pack_forget()
+            self.active_holder.pack(fill=tk.BOTH, expand=True)
+            return
+        self.__s.reset_view()
+        self.active_holder.pack_forget()
+        self.history_table.pack(fill=tk.BOTH, expand=True)
 
 class CreateCard(tk.Frame):
     def __init__(self, parent, width, data,
