@@ -1,4 +1,4 @@
-from views.register import RegistrationPage
+from views.register import RegistrationPage, CustomerRegistration
 from views.base_window import BaseWindow
 
 

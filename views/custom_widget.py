@@ -15,9 +15,10 @@ class InputBox(ttk.Entry):
         self.__text = self.__holder.get()
 
         # add action listener
-        self.bind("<Key>", self.__on_key)
+        self.bind("<Any-KeyPress>", self.__on_key)
         self.bind("<KeyRelease>", self.__on_key_release, add="+")
         self.bind("<FocusIn>", self.__on_focus, add="+")
+        self.bind("<FocusOut>", self.__out_focus, add="+")
         # self.bind("<Tab>", self.__on_tab, add="+")
 
         # if there is placeholder add it
@@ -63,8 +64,10 @@ class InputBox(ttk.Entry):
         # if there is no placeholder then just update the __text with the __holder
         self.__text = self.__holder.get()
 
-    def __on_tab(self, e):
-        self.focus_set()
+    def __out_focus(self, e):
+        if self.__holder.get():
+            return
+        self.__add_placeholder(self.__placeholder)
 
     # on focus, place the cursor at the beginning of the placeholder else if there is text return
     def __on_focus(self, _):
@@ -191,14 +194,14 @@ class Table(ttk.Frame):
         row = self.__row_refer[row_index]
         for child in row.winfo_children():
             label = child.winfo_children()[0]
-            label.configure(style="tableCellHover.TLabel")
+            label.configure(style="tableCellHover.TLabel", relief="groove")
         # self.update_idletasks()
 
     def __row_normal(self, row_index):
         row = self.__row_refer[row_index]
         for child in row.winfo_children():
             label = child.winfo_children()[0]
-            label.configure(style="tableCell.TLabel")
+            label.configure(style="tableCell.TLabel", relief="sunken")
         # self.update_idletasks()
 
 

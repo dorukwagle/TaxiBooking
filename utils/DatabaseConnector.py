@@ -3,9 +3,9 @@ from psycopg2 import OperationalError
 
 
 class DatabaseConnector:
+    __connection = None
+
     def __init__(self):
-        self.__connection = None
-        self.__cursor = None
         self.__user = "doruk"
         self.__dbname = "taxi_booking"
         self.__password = "dorukdb"
@@ -15,24 +15,18 @@ class DatabaseConnector:
     @property
     def __connect(self):
         try:
-            if self.__connection is None:
-                self.__connection = db.connect(database=self.__dbname, user=self.__user, password=self.__password,
-                                               host=self.__host, port=self.__port)
-                self.__connection.autocommit = True
-            return self.__connection
+            if DatabaseConnector.__connection is None:
+                DatabaseConnector.__connection = db.connect(database=self.__dbname, user=self.__user,
+                                                            password=self.__password,
+                                                            host=self.__host, port=self.__port)
+                DatabaseConnector.__connection.autocommit = True
+            return DatabaseConnector.__connection
         except OperationalError as e:
             raise e
 
     @property
     def cursor(self):
-        try:
-            if self.__cursor is None:
-                conn = self.__connect
-                self.__cursor = conn.cursor()
-            return self.__cursor
-        except OperationalError as e:
-            raise e
+        return DatabaseConnector.__connection.cursor()
 
     def close(self):
-        self.cursor.close()
         self.__connect.close()
