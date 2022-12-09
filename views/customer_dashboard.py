@@ -58,8 +58,7 @@ class CustomerDashboard(ttk.Frame):
         ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 10)).pack()
 
         # Trip details button
-        self.details_btn = cw.Button(self.__profile_frame, text="Trip Details", **CustomerDashboard.button_args
-                                     )
+        self.details_btn = cw.Button(self.__profile_frame, text="Trip Details", **CustomerDashboard.button_args)
         self.details_btn.pack(fill=tk.X, padx=parent.get_width_pct(5))
 
         # sign out button
@@ -70,11 +69,11 @@ class CustomerDashboard(ttk.Frame):
         # update the idle tasks so the BookingSection can use actual width and height of the widgets in self
         self.update_idletasks()
         # # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
-        # booking_section = BookingSection(self.base_frame, controller, self.__base_window)
-        # booking_section.pack()
-        # controller.add_view("booking_section", booking_section)
+        booking_section = BookingSection(self.base_frame, controller, self.__base_window)
+        booking_section.pack()
+        controller.add_view("booking_section", booking_section)
 
-        TripDetailsSection(self.base_frame, controller, self.__base_window).pack()
+        # TripDetailsSection(self.base_frame, controller, self.__base_window).pack()
         self.pack()
 
 

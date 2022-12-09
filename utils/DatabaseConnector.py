@@ -1,5 +1,6 @@
 import psycopg2 as db
 from psycopg2 import OperationalError
+from utils.env_loader import EnvLoader
 
 
 class DatabaseConnector:
@@ -7,11 +8,13 @@ class DatabaseConnector:
     __cursor = None
 
     def __init__(self):
-        self.__user = "doruk"
-        self.__dbname = "taxi_booking"
-        self.__password = "dorukdb"
-        self.__host = "localhost"
-        self.__port = "5432"
+        # load all the database connection details from the environment variable file
+        env = EnvLoader("db_config.env", True)  # load from db_config.env file at root directory, 'True' stripes spaces
+        self.__user = env.get("username")
+        self.__dbname = env.get("database_name")
+        self.__password = env.get("password")
+        self.__host = env.get("host")
+        self.__port = env.get("port")
         # connect to database
         self.__connect()
         self.__dbconnection = DatabaseConnector.__connection

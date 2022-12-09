@@ -63,5 +63,4 @@ class LoginPage(ttk.Frame):
         cw.Button(input_frame, text="Sign Up", takefocus=0, width=15, font=("", 20),
                   fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927",
                   command=controller.open_register).pack()
-
         self.pack()
