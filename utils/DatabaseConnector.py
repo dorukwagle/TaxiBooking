@@ -4,6 +4,7 @@ from psycopg2 import OperationalError
 
 class DatabaseConnector:
     __connection = None
+    __cursor = None
 
     def __init__(self):
         self.__user = "doruk"
@@ -11,8 +12,11 @@ class DatabaseConnector:
         self.__password = "dorukdb"
         self.__host = "localhost"
         self.__port = "5432"
+        # connect to database
+        self.__connect()
+        self.__dbconnection = DatabaseConnector.__connection
+        self.__dbcursor = DatabaseConnector.__cursor
 
-    @property
     def __connect(self):
         try:
             if DatabaseConnector.__connection is None:
@@ -20,14 +24,14 @@ class DatabaseConnector:
                                                             password=self.__password,
                                                             host=self.__host, port=self.__port)
                 DatabaseConnector.__connection.autocommit = True
-            return DatabaseConnector.__connection
+                DatabaseConnector.__cursor = DatabaseConnector.__connection.cursor()
         except OperationalError as e:
             raise e
 
     @property
     def cursor(self):
-        return DatabaseConnector.__connection.cursor()
+        return self.__dbcursor
 
     def close(self):
-        self.__connect.close()
+        self.__dbconnection.close()
 

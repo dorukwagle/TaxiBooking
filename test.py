@@ -135,4 +135,10 @@
 #     root.mainloop()
 #
 # ################################################################################
+from utils.DatabaseConnector import DatabaseConnector
 
+db = DatabaseConnector()
+cursor = db.cursor
+cursor.execute("create table justtesting(testing text, notesting text);")
+
+db.close()
