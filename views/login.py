@@ -61,6 +61,7 @@ class LoginPage(ttk.Frame):
         ttk.Label(input_frame, text="SignUp below", font=("", 15), foreground="#3d3935").pack()
         ttk.Label(input_frame, text="", font=("", 2)).pack()
         cw.Button(input_frame, text="Sign Up", takefocus=0, width=15, font=("", 20),
-                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()
+                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927",
+                  command=controller.open_register).pack()
 
         self.pack()

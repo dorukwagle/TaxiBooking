@@ -37,7 +37,8 @@ class RegistrationPage(ttk.Frame):
 
         # create back button
         back = cw.Button(self, text="< Back", takefocus=0, font=("", 15),
-                         fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927")
+                         fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927",
+                         command=controller.open_login)
         self.__canvas.create_window(2, 2, window=back, anchor=tk.NW)
 
         # create intro label

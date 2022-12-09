@@ -30,3 +30,4 @@ class DatabaseConnector:
 
     def close(self):
         self.__connect.close()
+

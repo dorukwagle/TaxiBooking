@@ -1,5 +1,4 @@
-from controllers.login_controller import LoginController
-from controllers.register_controller import RegistrationController
+from controllers.reg_log_controller import RegistrationController, LoginController
 from controllers.CustomerDashboardController import CDashboardController
 from views.base_window import BaseWindow
 
@@ -8,7 +7,7 @@ from views.base_window import BaseWindow
 if __name__ == '__main__':
     # instantiate BaseWindow and pass it to the controller object
     base_window = BaseWindow()
-    # LoginController(base_window)
+    LoginController(base_window)
     # RegistrationController(base_window)
-    CDashboardController(base_window)
+    # CDashboardController(base_window)
     base_window.mainloop()
