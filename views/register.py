@@ -12,16 +12,17 @@ def combo_select(combobox):
 
 
 class RegistrationPage(ttk.Frame):
-    def __init__(self, controller, parent):
+    def __init__(self, parent, controller):
         self.__controller = controller
         self.__parent = parent
         # create a style for the frame
         style = ttk.Style()
         style.configure("new.TFrame", background="#ffffff")
-        super().__init__(parent.frame)
+        super().__init__(self.__parent.frame)
 
         # create canvas to hold background image and frames
-        self.__canvas = tk.Canvas(self, width=parent.get_width_pct(100), height=parent.get_height_pct(100))
+        self.__canvas = tk.Canvas(self, width=self.__parent.get_width_pct(100),
+                                  height=self.__parent.get_height_pct(100))
         self.__canvas.pack()
         # create images
         self.__bg_img = ImageTk.PhotoImage(Image.open(Path("res/taxi2.jpg")).resize(
@@ -32,7 +33,7 @@ class RegistrationPage(ttk.Frame):
 
         # frame to hold all the elements
         base_frame = ttk.Frame(self, style="new.TFrame")
-        self.__canvas.create_window(parent.get_width_pct(70), parent.get_height_pct(10), anchor=tk.NW,
+        self.__canvas.create_window(self.__parent.get_width_pct(70), self.__parent.get_height_pct(10), anchor=tk.NW,
                                     window=base_frame)
 
         # create back button
@@ -42,26 +43,26 @@ class RegistrationPage(ttk.Frame):
         self.__canvas.create_window(2, 2, window=back, anchor=tk.NW)
 
         # create intro label
-        self.__text1 = self.__canvas.create_text(parent.get_width_pct(3), parent.get_height_pct(45),
+        self.__text1 = self.__canvas.create_text(self.__parent.get_width_pct(3), self.__parent.get_height_pct(45),
                                                  text="Fast and reliable rides at your fingertips!!", fill="white",
                                                  font=("", 30, "bold"),
                                                  anchor=tk.NW)
-        self.__text2 = self.__canvas.create_text(parent.get_width_pct(6), parent.get_height_pct(51),
+        self.__text2 = self.__canvas.create_text(self.__parent.get_width_pct(6), self.__parent.get_height_pct(51),
                                                  text="Get where you need to go with ease!!!", fill="white", font=("", 30, "bold"),
                                                  anchor=tk.NW)
         # add registration page to the base frame
         # CustomerRegistration(base_frame)
-        DriverRegistration(base_frame)
+        DriverRegistration(base_frame, self.__controller)
         self.pack()
 
 
 class CustomerRegistration(ttk.Frame):
-    def __init__(self, container):
+    def __init__(self, parent, controller):
         self.font = ("", 20)
         style = ttk.Style()
         style.configure("TFrame", background="#d4d4d4")
         # create right frame to hold form box
-        super().__init__(container, style="TFrame", padding=25)
+        super().__init__(parent, style="TFrame", padding=25)
 
         # create form elements
         self.full_name = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
@@ -123,12 +124,12 @@ class CustomerRegistration(ttk.Frame):
 
 
 class DriverRegistration(ttk.Frame):
-    def __init__(self, container):
+    def __init__(self, parent, controller):
         self.font = ("", 20)
         style = ttk.Style()
-        style.configure("TFrame", background="#d4d4d4")
+        style.configure("driver.TFrame", background="#d4d4d4")
         # create right frame to hold form box
-        super().__init__(container, style="TFrame", padding=25)
+        super().__init__(parent, style="driver.TFrame", padding=25)
 
         # create form elements
         self.full_name = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
@@ -180,4 +181,3 @@ class DriverRegistration(ttk.Frame):
 
         cw.Button(self, text="Sign Up", takefocus=0, width=15, font=("", 20),
                   fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()
-        self.pack()

@@ -57,7 +57,7 @@ class InputBox(ttk.Entry):
             # release event is called, the condition becomes false and this code do not execute
             self.__text = key.char
 
-    def __on_key_release(self, key):
+    def __on_key_release(self, _):
         # if the holder is empty add the placeholder again
         if not self.__holder.get() or not self.__text:
             self.__add_placeholder(self.__placeholder)
@@ -73,7 +73,7 @@ class InputBox(ttk.Entry):
             return
         self.icursor(0)
 
-    def __out_focus(self, e):
+    def __out_focus(self, _):
         if self.__holder.get():
             return
         self.__add_placeholder(self.__placeholder)
@@ -137,6 +137,7 @@ class Table(ttk.Frame):
         self.__row_height = 30
         self.__col_width = width  # initialize to width, assuming there is only one column
         self.__cols_width = dict()  # define to hold user defined custom width of each column
+        self.__table_heading = []
         style = ttk.Style()
         style.configure("tableCell.TLabel", fontcolor=fontcolor, background=bgcolor, font=("", fontsize))
         style.configure("tableBg.TFrame", background=bgcolor)
@@ -151,6 +152,7 @@ class Table(ttk.Frame):
 
     # set heading of the table
     def set_heading(self, heading: list):
+        self.__table_heading = heading
         self.__heading_set = True
         self.__cols_length = len(heading)
         self.__col_width = int(self.__width / (len(heading) - len(self.__cols_width)))
@@ -193,10 +195,44 @@ class Table(ttk.Frame):
                                        width=self.__cols_width.get(j, self.__col_width), height=self.__row_height)
                 cell_frame.pack_propagate(False)
                 # create label and add to frame
-                ttk.Label(cell_frame, text=data[i][j], cursor="hand2", width=self.__col_width,
-                          style="tableCell.TLabel", relief="sunken").pack(fill=tk.BOTH, expand=True)
+                data_type = data[i][j]
+                if type(data_type) is tuple:
+                    button_text = data_type[0]
+                    callback = data_type[1]
+                    btn = Button(cell_frame, text=button_text,
+                                 takefocus=0, font=("", "bold", "italic"),
+                                 fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522",
+                                 bg_pressed="#043927", cursor="hand2",
+                                 command=lambda e, ind=self.__row_refer[-1], cb=callback:
+                                 self.__callback(ind, cb)
+                                 )
+                    btn.pack(fill=tk.BOTH, expand=True)
+                else:
+                    ttk.Label(cell_frame, text=data[i][j], cursor="hand2", width=self.__col_width,
+                              style="tableCell.TLabel", relief="sunken") \
+                        .pack(fill=tk.BOTH, expand=True)
                 cell_frame.pack(side="left")
 
+    # called when the button is clicked and calls the corresponding callback function
+    def __callback(self, row_index, cb):
+        data = dict()
+        row = self.__row_refer[row_index]
+        for ind, cell in enumerate(row.winfo_children()):
+            widget = cell.winfo_children()[0]
+            if type(widget) is Button:
+                continue
+            data.update({self.__table_heading[ind]: widget.get()})
+        # call the callback method with row_index and data as arguments
+        cb(row_index, data)
+
+    def add_row(self, row: list):
+        self.add_rows([row])
+
+    def remove_row(self, index):
+        row = self.__row_refer.pop(index)
+        row.destroy()
+
+    # change row color when hover
     def __row_hover(self, row_index):
         row = self.__row_refer[row_index]
         for child in row.winfo_children():
@@ -204,6 +240,7 @@ class Table(ttk.Frame):
             label.configure(style="tableCellHover.TLabel", relief="groove")
         # self.update_idletasks()
 
+    # set row color back to normal when hover out
     def __row_normal(self, row_index):
         row = self.__row_refer[row_index]
         for child in row.winfo_children():
@@ -225,7 +262,7 @@ class ScrollFrame(ttk.Frame):
         scroller = ttk.Scrollbar(self, orient="vertical", style="scr.Vertical.TScrollbar")
         scroller.pack(fill=tk.Y, side="right")
         self.__c = canvas = tk.Canvas(self, bd=0, highlightthickness=0,
-                           yscrollcommand=scroller.set, background=bg)
+                                      yscrollcommand=scroller.set, background=bg)
         canvas.pack(side="left", fill="both", expand=True)
         scroller.config(command=canvas.yview)
         # self.pack_propagate(False)
