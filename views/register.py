@@ -42,12 +42,12 @@ class RegistrationPage(ttk.Frame):
         self.__canvas.create_window(2, 2, window=back, anchor=tk.NW)
 
         # create intro label
-        self.__text1 = self.__canvas.create_text(parent.get_width_pct(10), parent.get_height_pct(45),
-                                                 text="We guarantee you the deadliest crash", fill="white",
+        self.__text1 = self.__canvas.create_text(parent.get_width_pct(3), parent.get_height_pct(45),
+                                                 text="Fast and reliable rides at your fingertips!!", fill="white",
                                                  font=("", 30, "bold"),
                                                  anchor=tk.NW)
-        self.__text2 = self.__canvas.create_text(parent.get_width_pct(20), parent.get_height_pct(51),
-                                                 text="Experience the death", fill="white", font=("", 30, "bold"),
+        self.__text2 = self.__canvas.create_text(parent.get_width_pct(6), parent.get_height_pct(51),
+                                                 text="Get where you need to go with ease!!!", fill="white", font=("", 30, "bold"),
                                                  anchor=tk.NW)
         # add registration page to the base frame
         # CustomerRegistration(base_frame)

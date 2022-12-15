@@ -5,21 +5,24 @@ from typing import List
 
 
 class InputBox(ttk.Entry):
-    def __init__(self, container, text="", placeholder="", input_type="", show="*", font_color="", placeholder_color="", **kw):
+    def __init__(self, container, text="", placeholder="", input_type="", show="*", font_color="",
+                 placeholder_color="", background="grey", fieldbackground="white", **kw):
         self.__place_color = "#D3D3D3" if not placeholder_color else placeholder_color
         self.__foreground = font_color if font_color else "#000000"
         self.__show = show if input_type == "password" else ''
         self.__holder = StringVar(container)
+        style = ttk.Style()
+        style.configure(f"{id(self)}.TEntry", fieldbackground=fieldbackground, backgroun=background)
         self.__placeholder = placeholder
-        super().__init__(container, textvariable=self.__holder, takefocus=0, **kw)
+        super().__init__(container, textvariable=self.__holder, style=f"{id(self)}.TEntry", takefocus=0, **kw)
+        self.configure(background="red")
         self.__text = self.__holder.get()
 
         # add action listener
-        self.bind("<Any-KeyPress>", self.__on_key)
+        self.bind("<Key>", self.__on_key)
         self.bind("<KeyRelease>", self.__on_key_release, add="+")
         self.bind("<FocusIn>", self.__on_focus, add="+")
         self.bind("<FocusOut>", self.__out_focus, add="+")
-        # self.bind("<Tab>", self.__on_tab, add="+")
 
         # if there is placeholder add it
         if self.__placeholder:
@@ -56,7 +59,7 @@ class InputBox(ttk.Entry):
 
     def __on_key_release(self, key):
         # if the holder is empty add the placeholder again
-        if not self.__holder.get():
+        if not self.__holder.get() or not self.__text:
             self.__add_placeholder(self.__placeholder)
             # empty the self.__text
             self.__text = ""
@@ -64,16 +67,20 @@ class InputBox(ttk.Entry):
         # if there is no placeholder then just update the __text with the __holder
         self.__text = self.__holder.get()
 
-    def __out_focus(self, e):
-        if self.__holder.get():
-            return
-        self.__add_placeholder(self.__placeholder)
-
     # on focus, place the cursor at the beginning of the placeholder else if there is text return
     def __on_focus(self, _):
         if self.__text:
             return
         self.icursor(0)
+
+    def __out_focus(self, e):
+        if self.__holder.get():
+            return
+        self.__add_placeholder(self.__placeholder)
+
+    def __manage_special_keys(self, _):
+        if not self.__text:
+            return "break"
 
     def get_text(self):
         return self.__text

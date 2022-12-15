@@ -68,7 +68,7 @@ class CustomerDashboard(ttk.Frame):
 
         # update the idle tasks so the BookingSection can use actual width and height of the widgets in self
         self.update_idletasks()
-        # # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
+        # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
         booking_section = BookingSection(self.base_frame, controller, self.__base_window)
         booking_section.pack()
         controller.add_view("booking_section", booking_section)
@@ -187,6 +187,7 @@ class BookingSection(ttk.Frame):
 
         self.map.pack(fill=tk.BOTH)
 
+    # noinspection DuplicatedCode
     def __create_date_picker(self):
         self.__img_calendar = ImageTk.PhotoImage(Image.open("res/calendar_icon.png").resize((30, 30)))
         dframe = ttk.Frame(self.__panel_frame, style="picker.TFrame", cursor="hand2")
@@ -204,6 +205,7 @@ class BookingSection(ttk.Frame):
         dframe.bind("<Enter>", lambda *a: hover_frame(dframe))
         dframe.bind("<Leave>", lambda *a: leave_frame(dframe))
 
+    # noinspection DuplicatedCode
     def __create_time_picker(self):
         self.__img_clock = ImageTk.PhotoImage(Image.open("res/clock_icon.png").resize((30, 30)))
         dframe = ttk.Frame(self.__panel_frame, style="picker.TFrame", cursor="hand2")

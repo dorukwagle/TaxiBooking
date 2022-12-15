@@ -28,11 +28,12 @@ class LoginPage(ttk.Frame):
         base_frame = ttk.Frame(self, style="new.TFrame")
         canvas.create_window(parent.get_width_pct(70), parent.get_height_pct(30), anchor=tk.NW, window=base_frame)
 
-        # create intro label # Everything in life is somewhere else, and!! \n You get there in a cab!!!
+        # create intro label
         canvas.create_text(parent.get_width_pct(10), parent.get_height_pct(45),
-                           text="now this is significantly insignificant", fill="white", font=("", 30, "bold"), anchor=tk.NW)
+                           text="Everything in life is somewhere else!!", fill="white",
+                           font=("", 30, "bold"), anchor=tk.NW)
         canvas.create_text(parent.get_width_pct(20), parent.get_height_pct(51),
-                           text="better luck nextTime", fill="white", font=("", 30, "bold"), anchor=tk.NW)
+                           text="and, You get there in a cab!!!", fill="white", font=("", 30, "bold"), anchor=tk.NW)
 
         style = ttk.Style()
         style.configure("TFrame", background="#d4d4d4")
