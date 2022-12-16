@@ -91,49 +91,57 @@ class AdminDashboard(ttk.Frame):
         tabs_holder.add(register_tab, text="Register Drivers")
         tabs_holder.add(history_tab, text="Trips History")
 
+        # update idealtasks before adding other widgets
+        frame.update_idletasks()
+
         # create trip details table
         scroller = cw.ScrollFrame(request_tab)
         scroller.pack(fill=tk.BOTH, expand=True)
-        TripRequests(scroller, self.__controller)
+        TripRequests(scroller.frame, self.__controller, width=frame.winfo_width())
 
         # create confirmed trips table
         scroller = cw.ScrollFrame(confirmed_tab)
         scroller.pack(fill=tk.BOTH, expand=True)
-        ConfirmedTrips(scroller, self.__controller)
+        ConfirmedTrips(scroller.frame, self.__controller, width=frame.winfo_width())
 
         # create View drivers table
         scroller = cw.ScrollFrame(drivers_tab)
         scroller.pack(fill=tk.BOTH, expand=True)
-        ViewDrivers(scroller, self.__controller)
+        ViewDrivers(scroller.frame, self.__controller, width=frame.winfo_width())
 
         # create trips history table
         scroller = cw.ScrollFrame(history_tab)
         scroller.pack(fill=tk.BOTH, expand=True)
-        TripsHistory(scroller, self.__controller)
+        TripsHistory(scroller.frame, self.__controller, width=frame.winfo_width())
 
         # create driver registration tab
         DriverRegistration(register_tab, self.__controller).pack(pady=100)
 
 
 class TripRequests:
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width):
         self.__parent = parent
         self.__controller = controller
 
+        # crete a table to hold trip requests
+        self.trips_request_table = cw.Table(parent, width=width, fontsize=15)
+        self.trips_request_table.set_heading(["head", "tail"])
+        self.trips_request_table.pack()
+
 
 class ConfirmedTrips:
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width):
         self.__parent = parent
         self.__controller = controller
 
 
 class ViewDrivers:
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width):
         self.__parent = parent
         self.__controller = controller
 
 
 class TripsHistory:
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width):
         self.__parent = parent
         self.__controller = controller

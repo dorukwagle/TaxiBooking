@@ -69,11 +69,11 @@ class CustomerDashboard(ttk.Frame):
         # update the idle tasks so the BookingSection can use actual width and height of the widgets in self
         self.update_idletasks()
         # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
-        # booking_section = BookingSection(self.base_frame, controller, self.__base_window)
-        # booking_section.pack()
-        # controller.add_view("booking_section", booking_section)
+        booking_section = BookingSection(self.base_frame, controller, self.__base_window)
+        booking_section.pack()
+        controller.add_view("booking_section", booking_section)
 
-        TripDetailsSection(self.base_frame, controller, self.__base_window).pack()
+        # TripDetailsSection(self.base_frame, controller, self.__base_window).pack()
         self.pack()
 
 
@@ -306,8 +306,12 @@ class TripDetailsSection(ttk.Frame):
         self.history_table.set_row_height(50)
         self.history_table.set_heading(["id", "name", "address", "phone", "mobile", "permanent"])
         rows = []
-        for i in range(100):
+        for i in range(50):
             rows.append([f"data {i ** 4},{j ** 4}" for j in range(6)])
+        for i in range(50):
+            lst = [f"data {i ** 4},{j ** 4}" for j in range(5)]
+            lst.append(("info btn", self.test_call))
+            rows.append(lst)
             # self.history_table.add_rows([[f"data {i ** 4},{j ** 4}" for j in range(6)]])
         self.history_table.add_rows(rows)
 
@@ -317,6 +321,9 @@ class TripDetailsSection(ttk.Frame):
         card = CreateCard(self.active_holder, self.__trips_width, [[], [], [], [], []], height=250)
         card.pack()
         card.add_card([])
+
+    def test_call(self, index, data):
+        print(index, data)
 
     def handle_combo(self, _):
         if self.history_filter.get() == "Active Trips":

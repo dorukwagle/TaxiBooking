@@ -1,6 +1,7 @@
 from controllers.reg_log_controller import LoginController
 from controllers.CustomerDashboardController import CDashboardController
 from controllers.admin_dashboard_controller import AdminDashboardController
+from controllers.driver_dashboard_controller import DriverDashboardController
 from views.base_window import BaseWindow
 
 
@@ -10,5 +11,6 @@ if __name__ == '__main__':
     basewindow = BaseWindow()
     # LoginController(basewindow)
     # CDashboardController(basewindow)
-    AdminDashboardController(basewindow)
+    # AdminDashboardController(basewindow)
+    DriverDashboardController(basewindow)
     basewindow.mainloop()

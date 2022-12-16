@@ -200,10 +200,10 @@ class Table(ttk.Frame):
                     button_text = data_type[0]
                     callback = data_type[1]
                     btn = Button(cell_frame, text=button_text,
-                                 takefocus=0, font=("", "bold", "italic"),
+                                 takefocus=0, font=("", 13, "bold", "italic"),
                                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522",
                                  bg_pressed="#043927", cursor="hand2",
-                                 command=lambda e, ind=self.__row_refer[-1], cb=callback:
+                                 command=lambda ind=len(self.__row_refer)-1, cb=callback:
                                  self.__callback(ind, cb)
                                  )
                     btn.pack(fill=tk.BOTH, expand=True)
@@ -221,7 +221,7 @@ class Table(ttk.Frame):
             widget = cell.winfo_children()[0]
             if type(widget) is Button:
                 continue
-            data.update({self.__table_heading[ind]: widget.get()})
+            data.update({self.__table_heading[ind]: widget["text"]})
         # call the callback method with row_index and data as arguments
         cb(row_index, data)
 
@@ -237,6 +237,8 @@ class Table(ttk.Frame):
         row = self.__row_refer[row_index]
         for child in row.winfo_children():
             label = child.winfo_children()[0]
+            if type(label) is Button:
+                continue
             label.configure(style="tableCellHover.TLabel", relief="groove")
         # self.update_idletasks()
 
@@ -245,6 +247,8 @@ class Table(ttk.Frame):
         row = self.__row_refer[row_index]
         for child in row.winfo_children():
             label = child.winfo_children()[0]
+            if type(label) is Button:
+                continue
             label.configure(style="tableCell.TLabel", relief="sunken")
         # self.update_idletasks()
 
