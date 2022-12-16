@@ -45,14 +45,13 @@ class RegistrationPage(ttk.Frame):
         # create intro label
         self.__text1 = self.__canvas.create_text(self.__parent.get_width_pct(3), self.__parent.get_height_pct(45),
                                                  text="Fast and reliable rides at your fingertips!!", fill="white",
-                                                 font=("", 30, "bold"),
-                                                 anchor=tk.NW)
+                                                 font=("", 30, "bold"), anchor=tk.NW)
         self.__text2 = self.__canvas.create_text(self.__parent.get_width_pct(6), self.__parent.get_height_pct(51),
-                                                 text="Get where you need to go with ease!!!", fill="white", font=("", 30, "bold"),
-                                                 anchor=tk.NW)
+                                                 text="Get where you need to go with ease!!!", fill="white",
+                                                 font=("", 30, "bold"), anchor=tk.NW)
         # add registration page to the base frame
-        # CustomerRegistration(base_frame)
-        DriverRegistration(base_frame, self.__controller)
+        CustomerRegistration(base_frame, self.__controller).pack()
+        # DriverRegistration(base_frame, self.__controller).pack()
         self.pack()
 
 
@@ -120,7 +119,6 @@ class CustomerRegistration(ttk.Frame):
 
         cw.Button(self, text="Sign Up", takefocus=0, width=15, font=("", 20),
                   fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()
-        self.pack()
 
 
 class DriverRegistration(ttk.Frame):

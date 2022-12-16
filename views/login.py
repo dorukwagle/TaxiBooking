@@ -7,8 +7,7 @@ from .base_window import BaseWindow
 
 
 class LoginPage(ttk.Frame):
-    def __init__(self, controller, parent):
-        self.__controller = controller
+    def __init__(self, parent, controller):
         self.font = ("", 20)
         # create a style for the frame
         style = ttk.Style()

@@ -25,3 +25,5 @@ class RegistrationController:
 
     def open_login(self):
         LoginController(self.__window)
+
+
