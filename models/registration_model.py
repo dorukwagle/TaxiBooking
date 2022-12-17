@@ -3,14 +3,18 @@ from utils.DatabaseConnector import DatabaseConnector
 import utils.hash as hs
 
 
+class InputException(BaseException):
+    pass
+
+
 class RegistrationModel:
     def __init__(self, data):
         self.__data = data
         self.__name_regex = r"^[a-zA-Z]+([ ][a-zA-Z]+){1,2}$"
         self.__address_regex = r"^[\w\s,\d]+$"
         self.__email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-        self.__username_regex = r"\w"
-        self.__password_regex = r"^.{6,}$"
+        self.__username_regex = r"([a-zA-Z]{4,}(\d+)?)$"
+        self.__password_regex = r"^.{6,}"
         self.__telephone_regex = r"^((\d{10})|(\+\d{13}))$"
         self.__license_regex = r"^\d{5,}$"
         # initialize database connection
@@ -24,11 +28,11 @@ class RegistrationModel:
         pw = self.__data.get("user_password")
         # now match each datum to the
         if not re.fullmatch(self.__name_regex, name):
-            raise Exception("Invalid Full Name")
+            raise InputException("Invalid Full Name")
         if not re.fullmatch(self.__username_regex, user):
-            raise Exception("Invalid username")
+            raise InputException("Invalid username")
         if not re.fullmatch(self.__password_regex, pw):
-            raise Exception("Invalid password length")
+            raise InputException("Invalid password length")
 
     def validate_customer(self):
         self.__validate()
@@ -36,27 +40,27 @@ class RegistrationModel:
         telephone = self.__data.get("telephone")
         address = self.__data.get("address")
         if not re.fullmatch(self.__telephone_regex, telephone):
-            raise Exception("Invalid telephone number")
+            raise InputException("Invalid telephone number")
         if not re.fullmatch(self.__email_regex, email):
-            raise Exception("Invalid email address")
+            raise InputException("Invalid email address")
         if not re.fullmatch(self.__address_regex, address):
-            raise Exception("Invalid Address")
+            raise InputException("Invalid Address")
 
     def validate_driver(self):
         self.__validate()
         if not re.fullmatch(self.__license_regex, self.__data.get("license_id")):
-            raise Exception("Invalid license id")
+            raise InputException("Invalid license id")
 
     def email_exists(self):
-        query = "select * from customer where email=$1"
-        self.__cursor.execute(query, (self.__data.get("email"),))
+        query = "select * from customer where email=%s;"
+        self.__cursor.execute(query, [self.__data.get("email")])
         if not self.__cursor.fetchone():
             return False
         return True
 
     def user_exists(self):
-        query = "select * from credentials where username=$1"
-        self.__cursor.execute(query, (self.__data.get("username"),))
+        query = "select * from credentials where username=%s;"
+        self.__cursor.execute(query, [self.__data.get("username")])
         if not self.__cursor.fetchone():
             return False
         return True

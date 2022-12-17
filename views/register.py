@@ -13,7 +13,6 @@ def combo_select(combobox):
 
 class RegistrationPage(ttk.Frame):
     def __init__(self, parent, controller):
-        self.__controller = controller
         self.__parent = parent
         # create a style for the frame
         style = ttk.Style()
@@ -32,9 +31,9 @@ class RegistrationPage(ttk.Frame):
         self.__canvas.create_image(0, 0, anchor=tk.NW, image=self.__bg_img)
 
         # frame to hold all the elements
-        base_frame = ttk.Frame(self, style="new.TFrame")
+        self.base_frame = ttk.Frame(self, style="new.TFrame")
         self.__canvas.create_window(self.__parent.get_width_pct(70), self.__parent.get_height_pct(10), anchor=tk.NW,
-                                    window=base_frame)
+                                    window=self.base_frame)
 
         # create back button
         back = cw.Button(self, text="< Back", takefocus=0, font=("", 15),
@@ -50,8 +49,6 @@ class RegistrationPage(ttk.Frame):
                                                  text="Get where you need to go with ease!!!", fill="white",
                                                  font=("", 30, "bold"), anchor=tk.NW)
         # add registration page to the base frame
-        CustomerRegistration(base_frame, self.__controller).pack()
-        # DriverRegistration(base_frame, self.__controller).pack()
         self.pack()
 
 
@@ -112,13 +109,14 @@ class CustomerRegistration(ttk.Frame):
 
         ttk.Label(self, text="", font=("", 2)).pack()
         # display error message
-        self.error_msg = ttk.Label(self, text="error msg", font=("", 12), foreground="red")
+        self.error_msg = ttk.Label(self, text="", font=("", 12), foreground="red")
         self.error_msg.pack()
 
         ttk.Label(self, text="", font=("", 2)).pack()
 
         cw.Button(self, text="Sign Up", takefocus=0, width=15, font=("", 20),
-                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()
+                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927",
+                  command=controller.sign_up).pack()
 
 
 class DriverRegistration(ttk.Frame):

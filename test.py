@@ -89,21 +89,10 @@
 # # run the app
 # root.mainloop()
 
-
 import re
 
-pattern = re.compile(r"^((\d{10})|(\+\d{13}))$")
-
-# These strings will match the pattern
-print(pattern.match("+9779829293466"))
-print(pattern.match("9829293466"))
-print(pattern.match("1234567890"))
-print(pattern.match("+1234567890123"))
-
-# These strings will not match the pattern
-print(pattern.match("+977982929346"))
-print(pattern.match("+97798292934661"))
-print(pattern.match("9779829293466"))
-print(pattern.match("9829293466abc"))
-
-print(".......................................................")
+string = "abgc4687"
+m = re.fullmatch(
+    r"([a-zA-Z]{4,}(\d+)?)$",
+    string)
+print(m)

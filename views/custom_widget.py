@@ -82,7 +82,7 @@ class InputBox(ttk.Entry):
         if not self.__text:
             return "break"
 
-    def get_text(self):
+    def get(self):
         return self.__text
 
     def set_text(self, text):

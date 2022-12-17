@@ -3,7 +3,6 @@ class EnvLoader:
         file_data = []
         with open(file, "r") as fl:
             file_data = fl.read().split("\n")
-            print(file_data)
         # remove the space from before and after each words
         self.__variables = {
             line[:line.index("=")].strip() if nospace else line[:line.index("=")]:
