@@ -97,41 +97,42 @@
 #     string)
 # print(m)
 
-class WeightException(BaseException):
-    pass
-
-
-class BMI:
-    def __init__(self):
-        self.__weight = 0
-        self.__height = 0
-
-    def calculate(self):
-        bmi = self.__weight/((self.__height/100)**2)
-        print(bmi)
-
-    @property
-    def height(self):
-        return self.__height
-
-    @height.setter
-    def set_height(self, height):
-        if height > 0:
-            self.__height = height
-            return
-        raise WeightException("invalid age")
-
-    def set_weight(self, weight):
-        if weight > 0:
-            self.__weight = weight
-            return
-        raise WeightException("invalid weight")
-
-bmi = BMI()
-
-print(bmi.set_weight(765))
-bmi.set_height = 0
-bmi.calculate()
-
-print("successfully executed")
+# class WeightException(BaseException):
+#     pass
+#
+#
+# class BMI:
+#     def __init__(self):
+#         self.__weight = 0
+#         self.__height = 0
+#
+#     def calculate(self):
+#         bmi = self.__weight/((self.__height/100)**2)
+#         print(bmi)
+#
+#     @property
+#     def height(self):
+#         return self.__height
+#
+#     @height.setter
+#     def set_height(self, height):
+#         if height > 0:
+#             self.__height = height
+#             return
+#         raise WeightException("invalid age")
+#
+#     def set_weight(self, weight):
+#         if weight > 0:
+#             self.__weight = weight
+#             return
+#         raise WeightException("invalid weight")
+#
+# bmi = BMI()
+#
+# print(bmi.set_weight(765))
+# bmi.set_height = 0
+# bmi.calculate()
+#
+# print("successfully executed")
+#
 

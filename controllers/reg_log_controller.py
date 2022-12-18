@@ -32,7 +32,7 @@ class LoginController:
         # check the user role and redirect to the corresponding dashboard
         role = user.get("user_role")
         if role == "customer":
-            CDashboardController(self.__window, user)
+            CDashboardController(self.__window, home_page=LoginController, user=user)
 
 
 class RegistrationController:
@@ -119,4 +119,4 @@ class RegistrationController:
         ))
         user = log_model.get_user()
         # since, it is customer who is registered, open the customer dashboard
-        CDashboardController(self.__window, user)
+        CDashboardController(self.__window, home_page=LoginController, user=user)

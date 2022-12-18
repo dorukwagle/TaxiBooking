@@ -39,7 +39,6 @@ class CustomerDashboard(ttk.Frame):
         self.base_frame.grid(row=0, column=1, sticky=tk.E)
 
         # create avatar
-        print(user_info)
         img_path = "res/male_avatar.png" if user_info.get("gender") == "male" else "res/female_avatar.png"
         self.__avatar = ImageTk.PhotoImage(Image.open(img_path).resize(
             (int(parent.get_width_pct(15)), int(parent.get_height_pct(25)))
@@ -48,35 +47,31 @@ class CustomerDashboard(ttk.Frame):
             .pack(pady=parent.get_height_pct(5))
 
         ttk.Label(self.__profile_frame, text=user_info.get("full_name"), style="user_info.TLabel").pack()
-        ttk.Label(self.__profile_frame, text='@'+user_info.get("username"),
+        ttk.Label(self.__profile_frame, text='@' + user_info.get("username"),
                   style="user_info.TLabel", foreground="gray").pack()
 
         # add space
         ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 40)).pack()
         # booking button
-        self.book_btn = cw.Button(self.__profile_frame, text="Book Trip", **CustomerDashboard.button_args
-                                  )
+        self.book_btn = cw.Button(self.__profile_frame, text="Book Trip", **CustomerDashboard.button_args,
+                                  command=self.__controller.booking_view)
         self.book_btn.pack(fill=tk.X, padx=parent.get_width_pct(5))
         # add space
         ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 10)).pack()
 
         # Trip details button
-        self.details_btn = cw.Button(self.__profile_frame, text="Trip Details", **CustomerDashboard.button_args)
+        self.details_btn = cw.Button(self.__profile_frame, text="Trip Details", **CustomerDashboard.button_args,
+                                     command=self.__controller.trips_view)
         self.details_btn.pack(fill=tk.X, padx=parent.get_width_pct(5))
+
 
         # sign out button
         cw.Button(self.__profile_frame, text="Sign Out",
-                  **CustomerDashboard.button_args
+                  **CustomerDashboard.button_args, command=self.__controller.logout
                   ).pack(fill=tk.X, side=tk.BOTTOM)
 
         # update the idle tasks so the BookingSection can use actual width and height of the widgets in self
         self.update_idletasks()
-        # BOOKING SECTION OR TRIPS DETAIL SECTION WILL BE MANUALLY ADDED BY THE CONTROLLER CLASS IN THE self.base_frame
-        booking_section = BookingSection(self.base_frame, controller, self.__base_window)
-        booking_section.pack()
-        controller.add_view("booking_section", booking_section)
-
-        # TripDetailsSection(self.base_frame, controller, self.__base_window).pack()
         self.pack()
 
 
@@ -90,6 +85,7 @@ def leave_frame(frame):
     frame.configure(style="picker.TFrame")
     for child in frame.winfo_children():
         child.configure(style="picker.TLabel")
+
 
 
 class BookingSection(ttk.Frame):
@@ -186,11 +182,10 @@ class BookingSection(ttk.Frame):
         self.update_idletasks()
         self.map = tkmap.TkinterMapView(self.__map_frame, width=self.__map_width,
                                         height=self.__height, corner_radius=0)
-        self.map.set_tile_server("http://c.tile.stamen.com/watercolor/{z}/{x}/{y}.png")  # painting style
+        self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga")
 
         self.map.pack(fill=tk.BOTH)
 
-    # noinspection DuplicatedCode
     def __create_date_picker(self):
         self.__img_calendar = ImageTk.PhotoImage(Image.open("res/calendar_icon.png").resize((30, 30)))
         dframe = ttk.Frame(self.__panel_frame, style="picker.TFrame", cursor="hand2")
@@ -208,7 +203,7 @@ class BookingSection(ttk.Frame):
         dframe.bind("<Enter>", lambda *a: hover_frame(dframe))
         dframe.bind("<Leave>", lambda *a: leave_frame(dframe))
 
-    # noinspection DuplicatedCode
+
     def __create_time_picker(self):
         self.__img_clock = ImageTk.PhotoImage(Image.open("res/clock_icon.png").resize((30, 30)))
         dframe = ttk.Frame(self.__panel_frame, style="picker.TFrame", cursor="hand2")
@@ -361,7 +356,8 @@ class CreateCard(tk.Frame):
             cnv.pack()
             cnv.create_image(0, 0, image=self.__bg_img, anchor=tk.NW)
             # create frame to hold all the elements in the card
-            frame = tk.Frame(self.__card_list[-1], width=self.__width-40, height=self.__height-35, background="#ebf2f2")
+            frame = tk.Frame(self.__card_list[-1], width=self.__width - 40, height=self.__height - 35,
+                             background="#ebf2f2")
             frame.pack_propagate(False)
             # create a frame to hold labels
             frame_l = tk.Frame(frame, background="#ebf2f2")
@@ -375,15 +371,15 @@ class CreateCard(tk.Frame):
             cnv.create_window(20, 15, window=frame, anchor=tk.NW)
             # create labels to add in frame
             font = ("", 13, "bold", "italic")
-            tk.Label(frame_l, text="TripID: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+            tk.Label(frame_l, text="TripID: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
                 .grid(columnspan=5, row=0, column=0)
-            tk.Label(frame_l, text="DateTime: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+            tk.Label(frame_l, text="DateTime: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
                 .grid(row=0, column=5, columnspan=5)
-            tk.Label(frame_l, text="From: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+            tk.Label(frame_l, text="From: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
                 .grid(row=1, column=0, columnspan=5)
-            tk.Label(frame_l, text="To: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+            tk.Label(frame_l, text="To: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
                 .grid(row=1, column=5, columnspan=5)
-            tk.Label(frame_l, text="Status: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+            tk.Label(frame_l, text="Status: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
                 .grid(row=2, column=0, columnspan=5)
 
             cw.Button(frame_b, text="Payment", font=font,
