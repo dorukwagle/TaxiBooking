@@ -1,5 +1,5 @@
 from controllers.reg_log_controller import LoginController
-from controllers.CustomerDashboardController import CDashboardController
+from controllers.customer_dashboard_controller import CDashboardController
 from controllers.admin_dashboard_controller import AdminDashboardController
 from controllers.driver_dashboard_controller import DriverDashboardController
 from views.base_window import BaseWindow

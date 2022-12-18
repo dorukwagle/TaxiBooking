@@ -50,12 +50,13 @@ class LoginPage(ttk.Frame):
         self.password.pack()
         ttk.Label(input_frame, text="", font=("", 2)).pack()
         # display error message
-        self.error_msg = ttk.Label(input_frame, text="error msg", font=("", 12), foreground="red")
+        self.error_msg = ttk.Label(input_frame, text="", font=("", 12), foreground="red")
         self.error_msg.pack()
 
         ttk.Label(input_frame, text="", font=("", 2)).pack()
         cw.Button(input_frame, text="Sign In", takefocus=0, width=15, font=("", 20),
-                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()
+                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927",
+                  command=controller.login).pack()
         ttk.Label(input_frame, text="", font=("", 2)).pack()
         ttk.Label(input_frame, text="Don't have account ?", font=("", 15), foreground="#3d3935").pack()
         ttk.Label(input_frame, text="SignUp below", font=("", 15), foreground="#3d3935").pack()

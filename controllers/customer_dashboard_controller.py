@@ -6,17 +6,15 @@ from views.base_window import BaseWindow
 
 class CDashboardController:
 
-    def __init__(self, base_window, username=""):
+    def __init__(self, base_window, user):
         # get instance of the base window
         self.__window = base_window
         # self.frame = self.__window.frame
         # store all the child views that the customer_dashboard creates
         self.__child_views = {}
-
-        # retrieve the user information from database
-        user_info = dict()  # query database and store the result
+        self.__user_info = user
         # instantiate Dashboard view
-        self.customer_dashboard = CustomerDashboard(self, self.__window, user_info)
+        self.customer_dashboard = CustomerDashboard(self, self.__window, self.__user_info)
         # update google map address after the widgets are visible
         # load = threading.Timer(1, self.__set_current_location)
         # load.start()

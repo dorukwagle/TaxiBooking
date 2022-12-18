@@ -2,6 +2,7 @@ from views.login import LoginPage
 from views.register import RegistrationPage, CustomerRegistration
 from models.registration_model import RegistrationModel, InputException
 from models.login_model import LoginModel
+from controllers.customer_dashboard_controller import CDashboardController
 
 
 class LoginController:
@@ -10,10 +11,28 @@ class LoginController:
         self.__window = basewindow
         # self.__frame = self.__window.frame
         # instantiate the login view and add it to the base window
-        self.login_view = LoginPage(self.__window, self)
+        self.__view = LoginPage(self.__window, self)
 
     def open_register(self):
         RegistrationController(self.__window)
+
+    def login(self):
+        # fetch user credentials from the input fields
+        username = self.__view.username.get().strip()
+        password = self.__view.password.get().strip()
+        log_model = LoginModel(dict(
+            username=username,
+            user_password=password
+        ))
+        user = log_model.get_user()
+        # check if credentials are verified
+        if not user:
+            self.__view.error_msg.config(text="Invalid username or password")
+            return
+        # check the user role and redirect to the corresponding dashboard
+        role = user.get("user_role")
+        if role == "customer":
+            CDashboardController(self.__window, user)
 
 
 class RegistrationController:
@@ -25,6 +44,7 @@ class RegistrationController:
         self.__frame = RegistrationPage(self.__window, self).base_frame
         self.__view = CustomerRegistration(self.__frame, self)
         self.__view.pack()
+        self.__reg_model = None
         # self.registration_view = LoginPageReg(self, self.__window)
 
     def open_login(self):
@@ -40,7 +60,7 @@ class RegistrationController:
         username = self.__view.username.get().strip()
         password = self.__view.password.get().strip()
         confirm_pass = self.__view.confirm_password.get().strip()
-        gender = self.__view.gender.get().strip() if self.__view.gender.current() > -1 else ""
+        gender = self.__view.gender.get().strip().lower() if self.__view.gender.current() > -1 else ""
         payment_method = self.__view.payment_method.get().strip() if self.__view.payment_method.current() > -1 else ""
 
         # check if any field is empty
@@ -66,19 +86,19 @@ class RegistrationController:
 
     # validate the user input and also check if the username or email already exists
     def __validate(self, data):
-        reg_model = RegistrationModel(data)
+        self.__reg_model = RegistrationModel(data)
         # first validate the given data
         try:
-            reg_model.validate_customer()
+            self.__reg_model.validate_customer()
         except InputException as e:
             self.__view.error_msg.config(text=str(e))
             return False
 
         # check if email or username already exists in the database
-        if reg_model.email_exists():
+        if self.__reg_model.email_exists():
             self.__view.error_msg.config(text="Email already exists")
             return False
-        if reg_model.user_exists():
+        if self.__reg_model.user_exists():
             self.__view.error_msg.config(text="Username already exists")
             return False
         return True
@@ -91,5 +111,12 @@ class RegistrationController:
         # check if the data is valid and ready for registration
         if not self.__validate(data):
             return
-
-        self.__view.error_msg.config(text="all done")
+        self.__reg_model.register_customer()
+        # call the login model and get the user information
+        log_model = LoginModel(dict(
+            username=data.get("username"),
+            user_password=data.get("user_password")
+        ))
+        user = log_model.get_user()
+        # since, it is customer who is registered, open the customer dashboard
+        CDashboardController(self.__window, user)

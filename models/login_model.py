@@ -1,5 +1,5 @@
 from utils.hash import hash_match
-from utils.DatabaseConnector import DatabaseConnector
+from utils.database_connector import DatabaseConnector
 
 
 class LoginModel:
@@ -10,13 +10,13 @@ class LoginModel:
     # verify the user using the given username and password,
     def __verify(self):
         # first fetch the data from credentials with given username
-        query = "select username, user_password, user_role from credential where username=$1"
-        self.__cursor.execute(query, (self.__creds.get("username"),))
+        query = "select username, user_password, user_role from credentials where username=%s"
+        self.__cursor.execute(query, [self.__creds.get("username")])
         creds = self.__cursor.fetchone()
         if not creds:
             return None
         # now match the password with the hashed password in the database
-        if not hash_match(self.__creds.get("password"), creds[1]):
+        if not hash_match(self.__creds.get("user_password"), creds[1]):
             return None
         return True
 
@@ -26,9 +26,9 @@ class LoginModel:
             return None
         # fetch all the other information about the user
         query = "select c.full_name, c.gender, cr.username, cr.user_role" \
-                " from customer c inner join credentials cr on c.username=cr.username where username=$1"
-        self.__cursor.execute(query, (self.__creds.get("username"),))
-        info = self.__cursor.fetchone
+                " from customer c inner join credentials cr on c.username=cr.username where cr.username=%s"
+        self.__cursor.execute(query, [self.__creds.get("username")])
+        info = self.__cursor.fetchone()
         # return a dictionary with all the user information
         user = dict(
             full_name=info[0],

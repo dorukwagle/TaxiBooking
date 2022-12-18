@@ -1,5 +1,5 @@
 import re
-from utils.DatabaseConnector import DatabaseConnector
+from utils.database_connector import DatabaseConnector
 import utils.hash as hs
 
 
@@ -69,8 +69,8 @@ class RegistrationModel:
         # hash the password before storing to the database
         hashed_pass = hs.hashed(self.__data.get("user_password"))
         query1 = "insert into customer(full_name, gender, email, address, telephone, payment_method, username) "\
-                 "values($1, $2, $3, $4, $5, $6, $7)"
-        query2 = "insert into credentials(username, user_password, user_role) values($1, $2, 'customer')"
+                 "values(%s, %s, %s, %s, %s, %s, %s)"
+        query2 = "insert into credentials(username, user_password, user_role) values(%s, %s, 'customer')"
         self.__cursor.execute(query1, (
             self.__data.get("full_name"),
             self.__data.get("gender"),
@@ -87,8 +87,8 @@ class RegistrationModel:
 
     def register_driver(self):
         hashed_pass = hs.hashed(self.__data.get("user_password"))
-        query1 = "insert into driver(full_name, gender, lincese_id, username) values($1, $2, $3, $4)"
-        query2 = "insert into credentials(username, user_password, user_role) values($1, $2, 'driver')"
+        query1 = "insert into driver(full_name, gender, lincese_id, username) values(%s, %s, %s, %s)"
+        query2 = "insert into credentials(username, user_password, user_role) values(%s, %s, 'driver')"
         self.__cursor.execute(query1, (
             self.__data.get("full_name"),
             self.__data.get("gender"),

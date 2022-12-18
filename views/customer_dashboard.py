@@ -39,14 +39,17 @@ class CustomerDashboard(ttk.Frame):
         self.base_frame.grid(row=0, column=1, sticky=tk.E)
 
         # create avatar
-        self.__avatar = ImageTk.PhotoImage(Image.open("res/male_avatar.png").resize(
+        print(user_info)
+        img_path = "res/male_avatar.png" if user_info.get("gender") == "male" else "res/female_avatar.png"
+        self.__avatar = ImageTk.PhotoImage(Image.open(img_path).resize(
             (int(parent.get_width_pct(15)), int(parent.get_height_pct(25)))
         ))
         ttk.Label(self.__profile_frame, image=self.__avatar, background="#A3E3BE") \
             .pack(pady=parent.get_height_pct(5))
 
-        ttk.Label(self.__profile_frame, text="Full Name", style="user_info.TLabel").pack()
-        ttk.Label(self.__profile_frame, text="@username", style="user_info.TLabel", foreground="gray").pack()
+        ttk.Label(self.__profile_frame, text=user_info.get("full_name"), style="user_info.TLabel").pack()
+        ttk.Label(self.__profile_frame, text='@'+user_info.get("username"),
+                  style="user_info.TLabel", foreground="gray").pack()
 
         # add space
         ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 40)).pack()
