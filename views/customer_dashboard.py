@@ -63,8 +63,6 @@ class CustomerDashboard(ttk.Frame):
         self.details_btn = cw.Button(self.__profile_frame, text="Trip Details", **CustomerDashboard.button_args,
                                      command=self.__controller.trips_view)
         self.details_btn.pack(fill=tk.X, padx=parent.get_width_pct(5))
-
-
         # sign out button
         cw.Button(self.__profile_frame, text="Sign Out",
                   **CustomerDashboard.button_args, command=self.__controller.logout
@@ -87,10 +85,10 @@ def leave_frame(frame):
         child.configure(style="picker.TLabel")
 
 
-
 class BookingSection(ttk.Frame):
     def __init__(self, container, controller, base_window):
         self.__base_window = base_window
+        self.__controller = controller
         style = ttk.Style()
         style.configure("map.TFrame", background="#ffffff")
         style.configure("panel.TFrame", background="#ace1af")
@@ -126,7 +124,7 @@ class BookingSection(ttk.Frame):
         search_btn = cw.Button(search_frame, text="Go",
                                **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"},
                                font=("", 15, "bold", "italic"),
-                               command=lambda *a: controller.search_map())
+                               command=self.__controller.search_map)
         search_btn.pack(side="right")
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 5)).pack()
@@ -134,14 +132,13 @@ class BookingSection(ttk.Frame):
                                       takefocus=0, state="readonly", font=("", 12, "bold", "italic"))
         self.map_style.set("<<Choose Map View>>")
         self.map_style.pack(fill=tk.X, padx=5)
-        self.map_style.bind("<<ComboboxSelected>>", controller.change_map_tiles)
+        self.map_style.bind("<<ComboboxSelected>>", self.__controller.change_map_tiles)
 
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 30)).pack()
 
         self.pick_label = ttk.Label(self.__panel_frame, text="<<Select Pick Up >>",
-                                    justify=tk.LEFT, relief="raised",
-                                    wraplength=self.__panel_width * 0.9,
+                                    justify=tk.LEFT, relief="raised", wraplength=self.__panel_width * 0.9,
                                     width=self.__panel_width * 0.9, style="label.TLabel")
         self.pick_label.pack()
 
@@ -154,8 +151,7 @@ class BookingSection(ttk.Frame):
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 25)).pack()
         self.drop_label = ttk.Label(self.__panel_frame, text="<<Select Drop Off>>",
-                                    justify=tk.LEFT, relief="raised",
-                                    wraplength=self.__panel_width * 0.9,
+                                    justify=tk.LEFT, relief="raised", wraplength=self.__panel_width * 0.9,
                                     width=self.__panel_width * 0.9, style="label.TLabel")
         self.drop_label.pack()
 
@@ -183,7 +179,7 @@ class BookingSection(ttk.Frame):
         self.map = tkmap.TkinterMapView(self.__map_frame, width=self.__map_width,
                                         height=self.__height, corner_radius=0)
         self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga")
-
+        self.map.add_left_click_map_command(self.__controller.set_marker)
         self.map.pack(fill=tk.BOTH)
 
     def __create_date_picker(self):
@@ -223,6 +219,7 @@ class BookingSection(ttk.Frame):
 
     def __time_picker(self, _):
         top = tk.Toplevel(self.__panel_frame)
+        top.title("Select Time")
         time_input = AnalogPicker(top, type=constants.HOURS12)
         time_input.pack()
         AnalogThemes(time_input).setNavyBlue()
@@ -237,7 +234,7 @@ class BookingSection(ttk.Frame):
     def __date_picker(self, _):
         top = tk.Toplevel(self.__panel_frame)
         top.geometry(f'{int(self.__base_window.get_width_pct(25))}x{int(self.__base_window.get_height_pct(30))}')
-        top.title("Date Picker")
+        top.title("Select Date")
         calendar = Calendar(top, selectmode="day")
         calendar.pack(fill=tk.BOTH)
         btn = cw.Button(top, text="Select Date", **CustomerDashboard.button_args,
@@ -291,9 +288,9 @@ class TripDetailsSection(ttk.Frame):
                                            takefocus=0, state="readonly", font=("", 15, "bold", "italic"))
         self.history_filter.current(0)
         self.history_filter.pack(fill=tk.X, padx=5)
-        self.history_filter.bind("<<ComboboxSelected>>", self.handle_combo)
+        self.history_filter.bind("<<ComboboxSelected>>", controller.handle_combo)
         # add scroller
-        self.__s = scroll = cw.ScrollFrame(self.__trips_frame)
+        self.scroll = scroll = cw.ScrollFrame(self.__trips_frame)
         scroll.pack(fill=tk.BOTH, expand=True)
 
         # create frame to hold all the active bookings
@@ -322,16 +319,6 @@ class TripDetailsSection(ttk.Frame):
 
     def test_call(self, index, data):
         print(index, data)
-
-    def handle_combo(self, _):
-        if self.history_filter.get() == "Active Trips":
-            self.__s.reset_view()
-            self.history_table.pack_forget()
-            self.active_holder.pack(fill=tk.BOTH, expand=True)
-            return
-        self.__s.reset_view()
-        self.active_holder.pack_forget()
-        self.history_table.pack(fill=tk.BOTH, expand=True)
 
 
 class CreateCard(tk.Frame):
