@@ -1,3 +1,5 @@
+import tkinter.messagebox
+
 import tkintermapview
 from views.customer_dashboard import CustomerDashboard, BookingSection, TripDetailsSection
 import threading
@@ -31,6 +33,8 @@ class CDashboardController:
         # update google map address after the widgets are visible
         load = threading.Timer(1, self.__set_current_location)
         load.start()
+        # declare a variable to store whether the marker is clicked, and stop further callback on map click
+        self.__marker_clicked = False
 
     def booking_view(self):
         if self.__trips_view:
@@ -100,24 +104,105 @@ class CDashboardController:
             return
         self.__booking_view.map.set_address(place)
 
+    def __get_marker_info(self):
+        if not self.__selection_marker:
+            return None
+        text = self.__selection_marker.text
+        position = self.__selection_marker.position
+        self.__selection_marker.delete()
+        self.__selection_marker = None
+        return text, position
+
     def select_pickup_address(self):
-        pass
+        data = self.__get_marker_info()
+        if not data:
+            return
+        self.__pickup_marker = self.__booking_view.map.set_marker(*data[1], icon=self.__booking_view.pickup_mark,
+                                                                  text=data[0], command=self.__marker_click,
+                                                                  text_color="black")
+        self.__booking_view.pickup_btn.config(state="disabled")
+        self.__booking_view.pick_label.config(text=self.__pickup_marker.text)
+        # check if both the address are selected and draw the path
+        self.__draw_path()
 
     def select_dropoff_address(self):
-        pass
+        data = self.__get_marker_info()
+        if not data:
+            return
+        self.__drop_off_marker = self.__booking_view.map.set_marker(*data[1], icon=self.__booking_view.dropoff_mark,
+                                                                    text=data[0], command=self.__marker_click,
+                                                                    text_color="black")
+        self.__booking_view.dropoff_btn.config(state="disabled")
+        self.__booking_view.drop_label.config(text=self.__drop_off_marker.text)
+        # draw path if both the addresses are selected
+        self.__draw_path()
+
+    # draw the path between pickup and drop off position
+    def __draw_path(self):
+        # check if both the positions are available
+        if self.__pickup_marker and self.__drop_off_marker:
+            self.__drive_path = self.__booking_view.map.set_path([self.__pickup_marker.position,
+                                                                  self.__drop_off_marker.position])
+
+    # when one of the marker is clicked, delete the marker and the path if exists
+    def __marker_click(self, marker):
+        self.__marker_clicked = True
+        if marker is self.__selection_marker:
+            return
+        if marker is self.__pickup_marker:
+            self.__pickup_marker.delete()
+            self.__booking_view.pick_label.config(text="<<Select Pick Up>>")
+            self.__booking_view.pickup_btn.config(state="normal")
+            self.__pickup_marker = None
+        else:
+            self.__drop_off_marker.delete()
+            self.__booking_view.drop_label.config(text="<<Select Drop Off>>")
+            self.__booking_view.dropoff_btn.config(state="normal")
+            self.__drop_off_marker = None
+
+        if self.__drive_path:
+            self.__drive_path.delete()
+            self.__drive_path = None
 
     def set_marker(self, coordinate):
+        # do not execute if the user clicked on marker
+        if self.__marker_clicked:
+            self.__marker_clicked = False
+            return
         # add temp marker while the location data is loading
-        temp = self.__booking_view.map.set_marker(coordinate[0], coordinate[1], text="<Loading Location>")
+        temp = self.__booking_view.map.set_marker(coordinate[0], coordinate[1], text="<Loading Location>",
+                                                  icon=self.__booking_view.temp_mark)
         if self.__selection_marker:
             self.__selection_marker.delete()
-        # convert current coordinates to the address
-        addr = tkintermapview.convert_coordinates_to_address(coordinate[0], coordinate[1])
-        add_list = addr.geojson.get('features')[0].get('properties').get('address').split(',')[:4]
-        # break long address into two lines
-        lines = ','.join(add_list[:2]), ','.join(add_list[2:])
-        address = ',\n'.join(lines)
-        address = f"{address} ({addr.city})"
-        self.__selection_marker = self.__booking_view.map.set_marker(coordinate[0], coordinate[1],
-                                                                     text=address)
+        else:
+            # just to delete it later
+            temp2 = self.__booking_view.map.set_marker(coordinate[0], coordinate[1], text="<Loading Location>")
+            # delete the temp2, so the temp gets enough time to appear in the map
+            temp2.delete()
+        address = None
+        add_list = None
+        try:
+            # convert current coordinates to the address
+            addr = tkintermapview.convert_coordinates_to_address(coordinate[0], coordinate[1])
+            add_list = addr.geojson.get('features')[0].get('properties').get('address').split(',')
+            # break long address into two lines
+            lines = ','.join(add_list[:2]), ','.join(add_list[2:5])
+            address = ',\n'.join(lines)
+            address = f"{address} ({addr.city})"
+        except IndexError as e:
+            temp.delete()
+            self.__base_view.show_error()
+            return
+
+        self.__selection_marker = \
+            self.__booking_view.map.set_marker(coordinate[0], coordinate[1], text=address, command=self.__marker_click,
+                                               icon=self.__booking_view.temp_mark, text_color="black")
         temp.delete()
+
+    # confirm the booking
+    def confirm_booking(self):
+        # fetch the booking details from the view
+        # calculate the displacement between pickup and drop off
+        # calculate the driving time between pickup and drop off
+        # calculate the price of the ride
+        pass

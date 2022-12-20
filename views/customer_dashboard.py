@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 import views.custom_widget as cw
 from PIL import ImageTk, Image
@@ -72,6 +72,10 @@ class CustomerDashboard(ttk.Frame):
         self.update_idletasks()
         self.pack()
 
+    @staticmethod
+    def show_error():
+        messagebox.showerror("Request Timeout", "Check your internet connection")
+
 
 def hover_frame(frame):
     frame.configure(style="hover.TFrame")
@@ -92,7 +96,7 @@ class BookingSection(ttk.Frame):
         style = ttk.Style()
         style.configure("map.TFrame", background="#ffffff")
         style.configure("panel.TFrame", background="#ace1af")
-        style.configure("label.TLabel", background="#ace1af", font=("", 13, "italic"))
+        style.configure("label.TLabel", background="#ace1af", font=("", 10, "italic"))
         style.configure("picker.TLabel", background="silver", font=("", 13, "italic"))
         style.configure("picker.TFrame", background="silver")
         style.configure("hover.TFrame", background="grey")
@@ -144,9 +148,9 @@ class BookingSection(ttk.Frame):
 
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 10)).pack()
-        cw.Button(self.__panel_frame, text="Set Pickup",
-                  **CustomerDashboard.button_args) \
-            .pack(padx=self.__panel_width * 0.1, fill=tk.X)
+        self.pickup_btn = cw.Button(self.__panel_frame, text="Set Pickup",
+                                    **CustomerDashboard.button_args, command=self.__controller.select_pickup_address)
+        self.pickup_btn.pack(padx=self.__panel_width * 0.1, fill=tk.X)
 
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 25)).pack()
@@ -157,11 +161,12 @@ class BookingSection(ttk.Frame):
 
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 10)).pack()
-        cw.Button(self.__panel_frame, text="Set DropOff", **CustomerDashboard.button_args) \
-            .pack(padx=self.__panel_width * 0.1, fill=tk.X)
+        self.dropoff_btn = cw.Button(self.__panel_frame, text="Set DropOff",
+                                     **CustomerDashboard.button_args, command=self.__controller.select_dropoff_address)
+        self.dropoff_btn.pack(padx=self.__panel_width * 0.1, fill=tk.X)
 
         # add space
-        ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 40)).pack()
+        ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 20)).pack()
 
         # add date picker
         self.__create_date_picker()
@@ -170,9 +175,10 @@ class BookingSection(ttk.Frame):
         # add time picker
         self.__create_time_picker()
         # add space
-        ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 40)).pack()
+        ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 20)).pack()
         # ttk.Label(self.__map_frame, image=tk.PhotoImage(file="res/clock_icon.png")).pack()
-        cw.Button(self.__panel_frame, text="Confirm Trip", **CustomerDashboard.button_args).pack(fill=tk.X)
+        cw.Button(self.__panel_frame, text="Confirm Trip", **CustomerDashboard.button_args)\
+            .pack(fill=tk.X, side=tk.BOTTOM)
 
         # ----------------------------Add Map-------------------------------------
         self.update_idletasks()
@@ -181,6 +187,17 @@ class BookingSection(ttk.Frame):
         self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga")
         self.map.add_left_click_map_command(self.__controller.set_marker)
         self.map.pack(fill=tk.BOTH)
+        # create some location icons for marker
+        self.pickup_mark = ImageTk.PhotoImage(Image.open("res/green_location.png").resize(
+            (60, 90)
+        ))
+        self.dropoff_mark = ImageTk.PhotoImage(Image.open("res/red_location.png").resize(
+            (60, 90)
+        ))
+        self.temp_mark = ImageTk.PhotoImage(Image.open("res/blue_location.png").resize(
+            (60, 70)
+        ))
+
 
     def __create_date_picker(self):
         self.__img_calendar = ImageTk.PhotoImage(Image.open("res/calendar_icon.png").resize((30, 30)))
@@ -198,7 +215,6 @@ class BookingSection(ttk.Frame):
         dframe.bind("<ButtonRelease>", self.__date_picker)
         dframe.bind("<Enter>", lambda *a: hover_frame(dframe))
         dframe.bind("<Leave>", lambda *a: leave_frame(dframe))
-
 
     def __create_time_picker(self):
         self.__img_clock = ImageTk.PhotoImage(Image.open("res/clock_icon.png").resize((30, 30)))
