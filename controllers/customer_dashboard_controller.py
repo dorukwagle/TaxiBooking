@@ -1,7 +1,7 @@
-import tkinter.messagebox
-
+from datetime import datetime, timedelta
 import tkintermapview
 from views.customer_dashboard import CustomerDashboard, BookingSection, TripDetailsSection
+from models.customer_dashboard_model import CDashboardModel
 import threading
 import geocoder
 from views.base_window import BaseWindow
@@ -201,8 +201,32 @@ class CDashboardController:
 
     # confirm the booking
     def confirm_booking(self):
+        # create customer dashboard model
+        model = CDashboardModel()
         # fetch the booking details from the view
-        # calculate the displacement between pickup and drop off
-        # calculate the driving time between pickup and drop off
+        time_input = self.__booking_view.time_input['text'].strip()
+        date_input = self.__booking_view.date_input['text'].strip()
+        date_time = f"{date_input} {time_input}"
+        pickup_date_time = datetime.timestamp(datetime.fromisoformat(date_time))
+        pickup_address = self.__pickup_marker.text
+        drop_off_address = self.__drop_off_marker.text
+        # calculate the displacement between pickup and drop off and the driving duration
+        info = model.get_driving_info(self.__pickup_marker.position, self.__drop_off_marker.position)
+        distance = info.get("distance")
+        duration = info.get("duration")
+        drop_off_date_time = (datetime.fromtimestamp(pickup_date_time) + timedelta(hours=duration)).timestamp()
         # calculate the price of the ride
-        pass
+        price = model.calculate_price(distance)
+        # pack all the details into a dictionary
+        details = dict(
+            pickup_time=pickup_date_time,
+            drop_off_time=drop_off_date_time,
+            pickup_address=pickup_address,
+            drop_off_address=drop_off_address,
+            distance=distance,
+            duration=duration,
+            price=price
+        )
+        # pass the dictionary to the model
+        model.set_booking_info(details)
+

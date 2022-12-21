@@ -176,9 +176,10 @@ class BookingSection(ttk.Frame):
         self.__create_time_picker()
         # add space
         ttk.Label(self.__panel_frame, text="", style="label.TLabel", font=("", 20)).pack()
-        # ttk.Label(self.__map_frame, image=tk.PhotoImage(file="res/clock_icon.png")).pack()
-        cw.Button(self.__panel_frame, text="Confirm Trip", **CustomerDashboard.button_args)\
-            .pack(fill=tk.X, side=tk.BOTTOM)
+        cw.Button(self.__panel_frame, text="Confirm Trip", **CustomerDashboard.button_args,
+                  command=self.__controller.confirm_booking).pack(fill=tk.X, side=tk.BOTTOM)
+        self.error_msg = ttk.Label(self.__panel_frame, text="", style="label.TLabel", foreground="red", font=("", 15))
+        self.error_msg.pack(fill=tk.X, side=tk.BOTTOM)
 
         # ----------------------------Add Map-------------------------------------
         self.update_idletasks()
@@ -197,7 +198,6 @@ class BookingSection(ttk.Frame):
         self.temp_mark = ImageTk.PhotoImage(Image.open("res/blue_location.png").resize(
             (60, 70)
         ))
-
 
     def __create_date_picker(self):
         self.__img_calendar = ImageTk.PhotoImage(Image.open("res/calendar_icon.png").resize((30, 30)))
@@ -251,7 +251,7 @@ class BookingSection(ttk.Frame):
         top = tk.Toplevel(self.__panel_frame)
         top.geometry(f'{int(self.__base_window.get_width_pct(25))}x{int(self.__base_window.get_height_pct(30))}')
         top.title("Select Date")
-        calendar = Calendar(top, selectmode="day")
+        calendar = Calendar(top, selectmode="day", date_pattern="YYYY-MM-DD")
         calendar.pack(fill=tk.BOTH)
         btn = cw.Button(top, text="Select Date", **CustomerDashboard.button_args,
                         command=lambda *a: self.__pick_date(calendar.get_date(), top))
@@ -261,7 +261,12 @@ class BookingSection(ttk.Frame):
         top.focus_set()
 
     def __pick_time(self, time, dialog):
-        text = f'{time[0]} : {time[1]} : {time[2]}'
+        hour = time[0] if len(str(time[0])) == 2 else f"0{time[0]}"
+        minute = time[1] if len(str(time[1])) == 2 else f"0{time[1]}"
+        second = "00"
+        # convert to 24 hours format
+        hour = str(int(hour) + 12) if time[2].lower() == "pm" else hour
+        text = f'{hour}:{minute}:{second}'
         self.time_input.config(text=text)
         dialog.destroy()
 

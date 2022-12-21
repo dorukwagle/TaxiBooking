@@ -8,7 +8,12 @@ from utils.database_connector import DatabaseConnector
 
 class CDashboardModel:
     def __init__(self):
+        self.__info = None
         self.__driving_speed = 22  # KM/h
+        self.__cursor = DatabaseConnector().cursor
+
+    def set_booking_info(self, booking_info: dict):
+        self.__info = booking_info
 
     # calculate driving time and distance
     def get_driving_info(self, position1: list, position2: list):
@@ -35,3 +40,8 @@ class CDashboardModel:
         elif distance >= 21:
             price = base_price + (distance - base_distance) * 90
         return price
+
+    def request_trip(self):
+        if not self.__info:
+            return
+
