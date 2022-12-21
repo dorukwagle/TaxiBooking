@@ -226,12 +226,23 @@ class Table(ttk.Frame):
         # call the callback method with row_index and data as arguments
         cb(row_index, data)
 
+    # add a single row
     def add_row(self, row: list):
         self.add_rows([row])
 
+    # remove the row at given index
     def remove_row(self, index):
         row = self.__row_refer.pop(index)
         row.destroy()
+
+    # remove all the rows and reset the table
+    def reset(self):
+        # remove heading
+        for widget in self.__heading.winfo_children():
+            widget.destroy()
+            self.__heading_set = False
+        for widget in self.__row_refer:
+            widget.destroy()
 
     # change row color when hover
     def __row_hover(self, row_index):

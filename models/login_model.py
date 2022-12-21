@@ -25,15 +25,19 @@ class LoginModel:
         if not self.__verify():
             return None
         # fetch all the other information about the user
-        query = "select c.full_name, c.gender, cr.username, cr.user_role" \
-                " from customer c inner join credentials cr on c.username=cr.username where cr.username=%s"
+        query = "select username, user_role from credentials where username=%s"
         self.__cursor.execute(query, [self.__creds.get("username")])
-        info = self.__cursor.fetchone()
+        username, user_role = self.__cursor.fetchone()
+        sql = f"select {'cust_id' if user_role=='customer' else 'driver_id' if user_role=='driver' else 'admin_id'}, " \
+              f"full_name, gender from {user_role} where username=%s"
+        self.__cursor.execute(sql, [username])
+        user_id, full_name, gender = self.__cursor.fetchone()
         # return a dictionary with all the user information
         user = dict(
-            full_name=info[0],
-            gender=info[1],
-            username=info[2],
-            user_role=info[3]
+            full_name=full_name,
+            gender=gender,
+            username=username,
+            user_role=user_role,
+            user_id=user_id
         )
         return user

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import tkintermapview
 from views.customer_dashboard import CustomerDashboard, BookingSection, TripDetailsSection
-from models.customer_dashboard_model import CDashboardModel
+from models.customer_dashboard_model import CDashboardModel, InvalidData
 import threading
 import geocoder
 from views.base_window import BaseWindow
@@ -85,17 +85,6 @@ class CDashboardController:
             self.__booking_view.map.set_tile_server(satellite_view, max_zoom=22)
             return
         self.__booking_view.map.set_tile_server(normal_view, max_zoom=22)
-
-    # change view inside trips details section i.e. switch between active bookings and history
-    def handle_combo(self, _):
-        if self.__trips_view.history_filter.get() == "Active Trips":
-            self.__trips_view.scroll.reset_view()
-            self.__trips_view.history_table.pack_forget()
-            self.__trips_view.active_holder.pack(fill="both", expand=True)
-            return
-        self.__trips_view.scroll.reset_view()
-        self.__trips_view.active_holder.pack_forget()
-        self.__trips_view.history_table.pack(fill="both", expand=True)
 
     # method to search the places in map
     def search_map(self):
@@ -206,6 +195,10 @@ class CDashboardController:
         # fetch the booking details from the view
         time_input = self.__booking_view.time_input['text'].strip()
         date_input = self.__booking_view.date_input['text'].strip()
+        if time_input == "<<Select Time>>" or date_input == "<<Select Date>>" \
+                or not self.__pickup_marker or not self.__drop_off_marker:
+            self.__booking_view.error_msg.config(text="Please fill all the details")
+            return
         date_time = f"{date_input} {time_input}"
         pickup_date_time = datetime.timestamp(datetime.fromisoformat(date_time))
         pickup_address = self.__pickup_marker.text
@@ -225,8 +218,39 @@ class CDashboardController:
             drop_off_address=drop_off_address,
             distance=distance,
             duration=duration,
-            price=price
+            price=price,
+            cust_id=self.__user_info.get("user_id")
         )
         # pass the dictionary to the model
         model.set_booking_info(details)
+        # make a trip request, save the data to the database
+        try:
+            model.request_trip()
+        except InvalidData as e:
+            self.__booking_view.error_msg.config(text=str(e))
+            return
+        # redirect the user to the trip_details section
+        self.trips_view()
 
+    # ---------------------Trips Details--------------------------------------------
+
+    # change view inside trips details section i.e. switch between active bookings and history
+    def handle_combo(self, _):
+        if self.__trips_view.history_filter.get() == "Active Trips":
+            self.__trips_view.scroll.reset_view()
+            self.__trips_view.history_table.pack_forget()
+            self.__trips_view.active_holder.pack(fill="both", expand=True)
+            self.__display_active_trips()
+            return
+        self.__trips_view.scroll.reset_view()
+        self.__trips_view.active_holder.pack_forget()
+        self.__trips_view.history_table.pack(fill="both", expand=True)
+        self.__display_trips_history()
+
+    def __display_active_trips(self):
+        pass
+
+    def __display_trips_history(self):
+        self.__trips_view.history_table.set_columns_width({0: 80, 1: 180})
+        self.__trips_view.history_table.set_row_height(50)
+        self.__trips_view.history_table.set_heading(["id", "Driver", "Drop Off", "Date", "Status"])

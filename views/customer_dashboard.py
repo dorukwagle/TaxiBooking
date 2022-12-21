@@ -318,28 +318,11 @@ class TripDetailsSection(ttk.Frame):
         self.active_holder = ttk.Frame(scroll.frame, style="trips.TFrame")
         # create a table to store all the history
         self.history_table = cw.Table(scroll.frame, width=self.__trips_width, fontsize=15)
-        self.history_table.set_columns_width({0: 80, 1: 180})
-        self.history_table.set_row_height(50)
-        self.history_table.set_heading(["id", "name", "address", "phone", "mobile", "permanent"])
-        rows = []
-        for i in range(50):
-            rows.append([f"data {i ** 4},{j ** 4}" for j in range(6)])
-        for i in range(50):
-            lst = [f"data {i ** 4},{j ** 4}" for j in range(5)]
-            lst.append(("info btn", self.test_call))
-            rows.append(lst)
-            # self.history_table.add_rows([[f"data {i ** 4},{j ** 4}" for j in range(6)]])
-        self.history_table.add_rows(rows)
-
-        # self.history_table.pack(fill=tk.BOTH, expand=True)
         self.active_holder.pack(fill=tk.BOTH, expand=True)
 
-        card = CreateCard(self.active_holder, self.__trips_width, [[], [], [], [], []], height=250)
+        card = CreateCard(self.active_holder, self.__trips_width, [[], []], height=290)
         card.pack()
         card.add_card([])
-
-    def test_call(self, index, data):
-        print(index, data)
 
 
 class CreateCard(tk.Frame):
@@ -379,16 +362,20 @@ class CreateCard(tk.Frame):
             cnv.create_window(20, 15, window=frame, anchor=tk.NW)
             # create labels to add in frame
             font = ("", 13, "bold", "italic")
-            tk.Label(frame_l, text="TripID: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
-                .grid(columnspan=5, row=0, column=0)
-            tk.Label(frame_l, text="DateTime: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
-                .grid(row=0, column=5, columnspan=5)
-            tk.Label(frame_l, text="From: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
-                .grid(row=1, column=0, columnspan=5)
-            tk.Label(frame_l, text="To: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
-                .grid(row=1, column=5, columnspan=5)
-            tk.Label(frame_l, text="Status: ", font=font, justify=tk.LEFT, background="#ebf2f2") \
-                .grid(row=2, column=0, columnspan=5)
+            id_date_f = tk.Frame(frame_l, background="#ebf2f2")
+            id_date_f.pack(fill=tk.X)
+            tk.Label(id_date_f, text="TripID: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(side="left")
+            tk.Label(id_date_f, text="PickUp: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(side="left")
+            tk.Label(id_date_f, text="DropOff: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(side="left")
+            tk.Label(frame_l, text="From: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(anchor=tk.W)
+            tk.Label(frame_l, text="To: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(anchor=tk.W)
+            driver_price_f = tk.Frame(frame_l, background="#ebf2f2")
+            driver_price_f.pack(fill=tk.X)
+            tk.Label(driver_price_f, text="Driver: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
+                .pack(side="left")
+            tk.Label(driver_price_f, text="Price: Rs.", font=font, justify=tk.LEFT, background="#ebf2f2")\
+                .pack(side="left")
+            tk.Label(frame_l, text="Status: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(anchor=tk.W)
 
             cw.Button(frame_b, text="Payment", font=font,
                       **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"}
@@ -405,3 +392,12 @@ class CreateCard(tk.Frame):
         # completed bookings will have <details> and <payment> button
         # event binding will send back the id of the booking to the function
         self.__create_cards([data])
+
+    # remove the card at given index
+    def remove(self, index):
+        self.__card_list[index].destroy()
+
+    # delete all the cards
+    def reset(self):
+        for card in self.__card_list:
+            card.destroy()

@@ -1,15 +1,16 @@
-# from geopy.geocoders import Nominatim
-# geo_loc = Nominatim(user_agent="GetLoc")
-# address = geo_loc.reverse("27.727494800526653, 85.30451081887394").address
-
 import geocoder
 from utils.database_connector import DatabaseConnector
+from datetime import datetime
+
+
+class InvalidData(BaseException):
+    pass
 
 
 class CDashboardModel:
     def __init__(self):
         self.__info = None
-        self.__driving_speed = 22  # KM/h
+        self.__driving_speed = 20  # KM/h
         self.__cursor = DatabaseConnector().cursor
 
     def set_booking_info(self, booking_info: dict):
@@ -44,4 +45,27 @@ class CDashboardModel:
     def request_trip(self):
         if not self.__info:
             return
+        # validate time before saving the request
+        if datetime.now().timestamp() > datetime.fromtimestamp(float(self.__info.get("pickup_time"))).timestamp():
+            raise InvalidData("choose upcoming time, can't pick you from past!!")
+        query = """insert into trip(pickup_address, drop_off_address, pickup_datetime, distance, duration, price, 
+                drop_off_datetime, trip_status, payment_status, cust_id) values(%s, %s, %s, %s, %s, %s, %s, 
+                %s, %s, %s)"""
+        self.__cursor.execute(query, [
+            self.__info.get("pickup_address"),
+            self.__info.get("drop_off_address"),
+            self.__info.get("pickup_datetime"),
+            self.__info.get("distance"),
+            self.__info.get("duration"),
+            self.__info.get("price"),
+            self.__info.get("drop_off_datetime"),
+            "pending",
+            "unpaid",
+            self.__info.get("cust_id")
+        ])
 
+    def get_active_bookings(self):
+        # query all the bookings with status: confirmed and pending or payment status unpaid
+        # fetch the pickup and drop off time and convert to datetime
+        # return status and payment status as status, payment status e.g. confirmed, unpaid
+        pass
