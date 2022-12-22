@@ -254,9 +254,23 @@ class CDashboardController:
         data_list = model.get_active_bookings(self.__user_info.get("user_id"))
         if not data_list:
             return
+        self.__trips_view.card.reset()
         self.__trips_view.card.add_cards(data_list)
 
     def __display_trips_history(self):
-        self.__trips_view.history_table.set_columns_width({0: 80, 1: 180})
-        self.__trips_view.history_table.set_row_height(50)
-        self.__trips_view.history_table.set_heading(["id", "Driver", "Drop Off", "Date", "Status"])
+        model = CDashboardModel()
+        data_list = model.get_trips_history(self.__user_info.get("user_id"))
+        if not data_list:
+            return
+        # add rows to the table
+        self.__trips_view.history_table.reset()
+        self.__trips_view.history_table.add_rows(data_list)
+
+    def cancel_booking(self, card_index, trip_id):
+        # since the trip is cancelled, remove it from the card list
+        self.__trips_view.card.remove(card_index)
+        CDashboardModel().cancel_booking(trip_id)
+
+    def payment_info(self, _, trip_id):
+        data = None # query database and pass it
+        self.__trips_view.trip_information(data)

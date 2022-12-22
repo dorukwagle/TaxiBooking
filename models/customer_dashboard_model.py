@@ -112,16 +112,23 @@ class CDashboardModel:
         query = "select trip_id, driver_id, drop_off_address, pickup_datetime, trip_status" \
                 " from trip where cust_id=%s and trip_id not in " \
                 "(select trip_id from (select trip_id from trip where cust_id=%s and trip_status!='cancelled') as t "\
-                "where payment_status='unpaid'"
+                "where payment_status='unpaid');"
         self.__cursor.execute(query, [cust_id, cust_id])
-        details = []
-        for row in self.__cursor.fetchall():
-            row_dict = dict(
-                trip_id=row[0],
-                driver_id=get_driver_name(self.__cursor, row[1]) if row[1] else '<<Not Assigned>>',
-                drop_off_address=row[2],
-                pickup_datetime=row[3],
-                trip_status=row[4]
-            )
-            details.append(row_dict)
+        details = list(self.__cursor.fetchall())
+        for ind, row in enumerate(details):
+            # convert whole row from tuple to list
+            details[ind] = list(row)
+            details[ind][1] = get_driver_name(self.__cursor, row[1]) if row[1] else '<<Not Assigned>>'
         return details
+
+    def cancel_booking(self, trip_id):
+        query = "update trip set trip_status='cancelled' where trip_id=%s"
+        self.__cursor.execute(query, [trip_id])
+
+    def complete_payment(self, trip_id):
+        query = "update trip set payment_status='paid' where trip_id=%s"
+        self.__cursor.execute(query, [trip_id])
+
+    def complete_trip(self, trip_id):
+        query = "update trip set trip_status='completed' where trip_id=%s"
+        self.__cursor.execute(query, [trip_id])

@@ -238,11 +238,12 @@ class Table(ttk.Frame):
     # remove all the rows and reset the table
     def reset(self):
         # remove heading
-        for widget in self.__heading.winfo_children():
-            widget.destroy()
-            self.__heading_set = False
+        # for widget in self.__heading.winfo_children():
+        #     widget.destroy()
+        #     self.__heading_set = False
         for widget in self.__row_refer:
             widget.destroy()
+
 
     # change row color when hover
     def __row_hover(self, row_index):

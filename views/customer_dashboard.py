@@ -293,7 +293,7 @@ class TripDetailsSection(ttk.Frame):
         style.configure("hovert.TLabel", background="grey")
         super().__init__(container)
         # define width of map and panel
-        self.__trips_width = container.winfo_width() * 0.7
+        self.__trips_width = container.winfo_width() * 0.85
         self.__control_width = container.winfo_width() - self.__trips_width
         self.__height = container.winfo_height()
 
@@ -322,10 +322,30 @@ class TripDetailsSection(ttk.Frame):
         self.active_holder = ttk.Frame(scroll.frame, style="trips.TFrame")
         # create a table to store all the history
         self.history_table = cw.Table(scroll.frame, width=self.__trips_width, fontsize=15)
+        self.history_table.set_columns_width({0: 60, 1: 250, 3: 205, 4: 150})
+        self.history_table.set_heading(["id", "Driver", "Drop Off", "Date", "Status"])
+        self.history_table.set_row_height(40)
         self.active_holder.pack(fill=tk.BOTH, expand=True)
 
-        self.card = CreateCard(self.active_holder, self.__trips_width, height=290)
+        self.card = CreateCard(self.active_holder, self.__trips_width, height=280)
+        self.card.set_cancel_cb(controller.cancel_booking)
+        self.card.set_payment_cb(controller.payment_info)
         self.card.pack()
+
+    def trip_information(self, data):
+        top = tk.Toplevel(self.__trips_frame)
+        top.title("Payment Information")
+
+        btn_pay = cw.Button(top, text="Select Time",
+                            **CustomerDashboard.button_args,
+                            )
+        btn_pay.pack(side="bottom", fill=tk.X)
+        cw.Button(top, text="Select Time",
+                  **CustomerDashboard.button_args,
+                  command=top.destroy).pack(side="bottom", fill=tk.X)
+        top.transient(self.__base_window)
+        top.grab_set()
+        top.focus_set()
 
 
 class CreateCard(tk.Frame):
@@ -336,6 +356,10 @@ class CreateCard(tk.Frame):
         self.__space = space
         self.__bg_img = ImageTk.PhotoImage(Image.open("res/card.png").resize((int(self.__width), self.__height)))
         self.__card_list = []  # a list to hold the reference of all card frames
+
+        # store the callback methods
+        self.__cancel_callback = None
+        self.__payment_callback = None
 
         super().__init__(parent, background="white", borderwidth=0)  # sc = shadow color
 
@@ -386,12 +410,33 @@ class CreateCard(tk.Frame):
                      background="#ebf2f2").pack(anchor=tk.W)
 
             cw.Button(frame_b, text="Payment", font=font,
-                      **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"}
-                      ).pack(side=tk.RIGHT, anchor=tk.SE, padx=5)
+                      **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"},
+                      command=lambda ind=len(self.__card_list) - 1, tid=data.get("trip_id"): self.__callpay(ind, tid)) \
+                .pack(side=tk.RIGHT, anchor=tk.SE, padx=5)
             cw.Button(frame_b, text="Cancel", font=font,
-                      **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"}
+                      **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"},
+                      command=lambda ind=len(self.__card_list) - 1, tid=data.get("trip_id"): self.__callcan(ind, tid)
                       ).pack(side=tk.RIGHT, anchor=tk.SE, padx=5)
             self.__card_list[-1].pack()
+
+    # callback for payment button
+    def __callpay(self, ind, tid):
+        if not self.__payment_callback:
+            return
+        self.__payment_callback(ind, tid)
+
+    # callback for cancel button
+    def __callcan(self, ind, tid):
+        if not self.__cancel_callback:
+            return
+        self.__cancel_callback(ind, tid)
+
+    # set callback methods
+    def set_cancel_cb(self, callback):
+        self.__cancel_callback = callback
+
+    def set_payment_cb(self, callback):
+        self.__payment_callback = callback
 
     # add a new card
     def add_card(self, data: dict):
@@ -407,6 +452,7 @@ class CreateCard(tk.Frame):
     # remove the card at given index
     def remove(self, index):
         self.__card_list[index].destroy()
+        self.__card_list.pop(index)
 
     # delete all the cards
     def reset(self):
