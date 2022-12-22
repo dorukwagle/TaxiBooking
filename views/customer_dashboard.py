@@ -261,11 +261,15 @@ class BookingSection(ttk.Frame):
         top.focus_set()
 
     def __pick_time(self, time, dialog):
+        # function to convert hour to 24 hours format
+        def converted(_hour):
+            return int(_hour) + 12 if int(hour) < 12 else _hour
+
         hour = time[0] if len(str(time[0])) == 2 else f"0{time[0]}"
         minute = time[1] if len(str(time[1])) == 2 else f"0{time[1]}"
         second = "00"
         # convert to 24 hours format
-        hour = str(int(hour) + 12) if time[2].lower() == "pm" else hour
+        hour = converted(hour) if time[2].lower() == "pm" else hour
         text = f'{hour}:{minute}:{second}'
         self.time_input.config(text=text)
         dialog.destroy()
@@ -320,13 +324,12 @@ class TripDetailsSection(ttk.Frame):
         self.history_table = cw.Table(scroll.frame, width=self.__trips_width, fontsize=15)
         self.active_holder.pack(fill=tk.BOTH, expand=True)
 
-        card = CreateCard(self.active_holder, self.__trips_width, [[], []], height=290)
-        card.pack()
-        card.add_card([])
+        self.card = CreateCard(self.active_holder, self.__trips_width, height=290)
+        self.card.pack()
 
 
 class CreateCard(tk.Frame):
-    def __init__(self, parent, width, data,
+    def __init__(self, parent, width,
                  height=0, space=2):
         self.__width = width - 20
         self.__height = int(self.__width / 2.7) if not height else height
@@ -335,7 +338,6 @@ class CreateCard(tk.Frame):
         self.__card_list = []  # a list to hold the reference of all card frames
 
         super().__init__(parent, background="white", borderwidth=0)  # sc = shadow color
-        self.__create_cards(data)
 
     # create cards recursively
     def __create_cards(self, datalist):
@@ -361,21 +363,27 @@ class CreateCard(tk.Frame):
             frame_b.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
             cnv.create_window(20, 15, window=frame, anchor=tk.NW)
             # create labels to add in frame
-            font = ("", 13, "bold", "italic")
+            font = ("", 11, "bold", "italic")
             id_date_f = tk.Frame(frame_l, background="#ebf2f2")
             id_date_f.pack(fill=tk.X)
-            tk.Label(id_date_f, text="TripID: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(side="left")
-            tk.Label(id_date_f, text="PickUp: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(side="left")
-            tk.Label(id_date_f, text="DropOff: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(side="left")
-            tk.Label(frame_l, text="From: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(anchor=tk.W)
-            tk.Label(frame_l, text="To: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(anchor=tk.W)
+            tk.Label(id_date_f, text=f"TRIP ID: {data.get('trip_id')}", font=font, justify=tk.LEFT,
+                     background="#ebf2f2").pack(side="left")
+            tk.Label(id_date_f, text=f"PICKUP: {data.get('pickup_datetime')}", font=font, justify=tk.LEFT,
+                     background="#ebf2f2").pack(side="left")
+            tk.Label(id_date_f, text=f"DROPOFF: {data.get('drop_off_datetime')}", font=font, justify=tk.LEFT,
+                     background="#ebf2f2").pack(side="left")
+            tk.Label(frame_l, text=f"FROM: {data.get('pickup_address')}", font=font, justify=tk.LEFT,
+                     wraplength=self.__width - 45, background="#ebf2f2").pack(anchor=tk.W)
+            tk.Label(frame_l, text=f"TO: {data.get('drop_off_address')}", font=font, justify=tk.LEFT,
+                     wraplength=self.__width - 45, background="#ebf2f2").pack(anchor=tk.W)
             driver_price_f = tk.Frame(frame_l, background="#ebf2f2")
             driver_price_f.pack(fill=tk.X)
-            tk.Label(driver_price_f, text="Driver: ", font=font, justify=tk.LEFT, background="#ebf2f2")\
-                .pack(side="left")
-            tk.Label(driver_price_f, text="Price: Rs.", font=font, justify=tk.LEFT, background="#ebf2f2")\
-                .pack(side="left")
-            tk.Label(frame_l, text="Status: ", font=font, justify=tk.LEFT, background="#ebf2f2").pack(anchor=tk.W)
+            tk.Label(driver_price_f, text=f"DRIVER: {data.get('driver_name')}", font=font, justify=tk.LEFT,
+                     background="#ebf2f2").pack(side="left")
+            tk.Label(driver_price_f, text=f"PRICE: Rs.{data.get('price')}", font=font, justify=tk.LEFT,
+                     background="#ebf2f2").pack(side="left")
+            tk.Label(frame_l, text=f"STATUS: {data.get('status')}", font=font, justify=tk.LEFT,
+                     background="#ebf2f2").pack(anchor=tk.W)
 
             cw.Button(frame_b, text="Payment", font=font,
                       **{k: v for k, v in CustomerDashboard.button_args.items() if k != "font"}
@@ -386,12 +394,15 @@ class CreateCard(tk.Frame):
             self.__card_list[-1].pack()
 
     # add a new card
-    def add_card(self, data):
+    def add_card(self, data: dict):
         # add cards individually from here
         # upcoming bookings will have <cancel> and <details> button
         # completed bookings will have <details> and <payment> button
         # event binding will send back the id of the booking to the function
         self.__create_cards([data])
+
+    def add_cards(self, datalist: [{}]):
+        self.__create_cards(datalist)
 
     # remove the card at given index
     def remove(self, index):

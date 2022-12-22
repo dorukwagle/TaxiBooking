@@ -57,6 +57,8 @@ class CDashboardController:
         self.__base_view.book_btn["state"] = "normal"
 
         self.__trips_view = TripDetailsSection(self.__base_view.base_frame, self, self.__window)
+        # call __display_active_trips to load trips data
+        self.__display_active_trips()
         self.__trips_view.pack()
         self.__booking_visible = False
 
@@ -248,7 +250,11 @@ class CDashboardController:
         self.__display_trips_history()
 
     def __display_active_trips(self):
-        pass
+        model = CDashboardModel()
+        data_list = model.get_active_bookings(self.__user_info.get("user_id"))
+        if not data_list:
+            return
+        self.__trips_view.card.add_cards(data_list)
 
     def __display_trips_history(self):
         self.__trips_view.history_table.set_columns_width({0: 80, 1: 180})
