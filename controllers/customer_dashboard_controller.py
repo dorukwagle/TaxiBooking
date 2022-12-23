@@ -271,6 +271,12 @@ class CDashboardController:
         self.__trips_view.card.remove(card_index)
         CDashboardModel().cancel_booking(trip_id)
 
-    def payment_info(self, _, trip_id):
-        data = None # query database and pass it
-        self.__trips_view.trip_information(data)
+    def payment_info(self, card_index, trip_id):
+        data = CDashboardModel().get_trip(trip_id)
+        self.__trips_view.trip_information(data, card_index, command=self.__pay_bill)
+
+    def __pay_bill(self, trip_data, card_index):
+        CDashboardModel().complete_payment(trip_data.get("trip_id"))
+        if trip_data.get("trip_status") == 'completed':
+            # delete the card
+            self.__trips_view.card.remove(card_index)

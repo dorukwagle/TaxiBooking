@@ -332,17 +332,27 @@ class TripDetailsSection(ttk.Frame):
         self.card.set_payment_cb(controller.payment_info)
         self.card.pack()
 
-    def trip_information(self, data):
+    def trip_information(self, data, card_index, command):
         top = tk.Toplevel(self.__trips_frame)
         top.title("Payment Information")
-
-        btn_pay = cw.Button(top, text="Select Time",
+        tk.Label(top, text=f"DRIVER: {data.get('driver_name')}", justify=tk.LEFT, padx=10).pack(anchor=tk.W)
+        tk.Label(top, text=f"PICKUP TIME: {data.get('pickup_time')}", justify=tk.LEFT, padx=10).pack(anchor=tk.W)
+        tk.Label(top, text=f"PICKUP ADDRESS: {data.get('pickup_address')}", justify=tk.LEFT, padx=10).pack(anchor=tk.W)
+        tk.Label(top, text=f"DROPOFF ADDRESS: {data.get('drop_off_address')}", justify=tk.LEFT, padx=10).pack(anchor=tk.W)
+        tk.Label(top, text=f"DISTANCE: {data.get('distance')}", justify=tk.LEFT, padx=10).pack(anchor=tk.W)
+        tk.Label(top, text=f"DURATION: {data.get('duration')}", justify=tk.LEFT, padx=10).pack(anchor=tk.W)
+        tk.Label(top, text=f"PRICE: {data.get('price')}", justify=tk.LEFT, padx=10).pack(anchor=tk.W)
+        btn_f = tk.Frame(top)
+        btn_f.pack(fill=tk.X, side=tk.BOTTOM)
+        btn_pay = cw.Button(btn_f, text="Pay Bill",
                             **CustomerDashboard.button_args,
-                            )
-        btn_pay.pack(side="bottom", fill=tk.X)
-        cw.Button(top, text="Select Time",
+                            command=lambda tid=data, cid=card_index: (command(tid, cid), top.destroy()))
+        btn_pay.pack(side="left", fill=tk.X, expand=True)
+        if data.get("payment_status") == "paid":
+            btn_pay.config(text="Paid", state="disabled")
+        cw.Button(btn_f, text="Cancel",
                   **CustomerDashboard.button_args,
-                  command=top.destroy).pack(side="bottom", fill=tk.X)
+                  command=top.destroy).pack(side="left", fill=tk.X, expand=True)
         top.transient(self.__base_window)
         top.grab_set()
         top.focus_set()
