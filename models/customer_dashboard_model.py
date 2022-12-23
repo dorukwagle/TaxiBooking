@@ -74,7 +74,7 @@ class CDashboardModel:
 
         # query all the bookings with status: not cancelled and payment status unpaid
         query = """select * from (select * from trip where cust_id=%s and trip_status!='cancelled') as t 
-        where payment_status='unpaid'"""
+        where trip_status != 'completed' or payment_status != 'paid'"""
         self.__cursor.execute(query, [cust_id])
         details = self.__cursor.fetchall()
         trip_infos = []
@@ -108,7 +108,7 @@ class CDashboardModel:
         query = "select trip_id, driver_id, drop_off_address, pickup_datetime, trip_status" \
                 " from trip where cust_id=%s and trip_id not in " \
                 "(select trip_id from (select trip_id from trip where cust_id=%s and trip_status!='cancelled') as t "\
-                "where payment_status='unpaid');"
+                "where trip_status != 'completed' or payment_status != 'paid');"
         self.__cursor.execute(query, [cust_id, cust_id])
         details = list(self.__cursor.fetchall())
         for ind, row in enumerate(details):

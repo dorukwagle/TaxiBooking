@@ -33,6 +33,8 @@ class LoginController:
         role = user.get("user_role")
         if role == "customer":
             CDashboardController(self.__window, home_page=LoginController, user=user)
+        elif role == "admin":
+            pass
 
 
 class RegistrationController:
