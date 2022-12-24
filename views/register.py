@@ -3,9 +3,7 @@ from tkinter import ttk
 import views.custom_widget as cw
 from PIL import ImageTk, Image
 from pathlib import Path
-import time
-from .base_window import BaseWindow
-
+from tkinter.messagebox import showinfo
 
 def combo_select(combobox):
     combobox["foreground"] = "black"
@@ -121,11 +119,12 @@ class CustomerRegistration(ttk.Frame):
 
 class DriverRegistration(ttk.Frame):
     def __init__(self, parent, controller):
+        self.__parent = parent
         self.font = ("", 20)
         style = ttk.Style()
         style.configure("driver.TFrame", background="#d4d4d4")
         # create right frame to hold form box
-        super().__init__(parent, style="driver.TFrame", padding=25)
+        super().__init__(self.__parent, style="driver.TFrame", padding=25)
 
         # create form elements
         self.full_name = cw.InputBox(self, placeholder="Full Name", placeholder_color="#c3c3c3", font=self.font)
@@ -137,11 +136,6 @@ class DriverRegistration(ttk.Frame):
         self.gender.set("<<Select Gender>>")
         self.gender.bind("<<ComboboxSelected>>", lambda event: combo_select(self.gender))
         self.gender.pack(expand=1, fill="both")
-        # add space
-        ttk.Label(self, text="", font=("", 2)).pack()
-
-        self.email_address = cw.InputBox(self, placeholder="Email Address", placeholder_color="#c3c3c3", font=self.font)
-        self.email_address.pack()
         # add space
         ttk.Label(self, text="", font=("", 2)).pack()
 
@@ -170,10 +164,15 @@ class DriverRegistration(ttk.Frame):
 
         ttk.Label(self, text="", font=("", 2)).pack()
         # display error message
-        self.error_msg = ttk.Label(self, text="error msg", font=("", 12), foreground="red")
+        self.error_msg = ttk.Label(self, text="", font=("", 12), foreground="red")
         self.error_msg.pack()
 
         ttk.Label(self, text="", font=("", 2)).pack()
 
         cw.Button(self, text="Sign Up", takefocus=0, width=15, font=("", 20),
-                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927").pack()
+                  fg="white", fg_pressed="grey", bg="#299617", bg_hover="#0a6522", bg_pressed="#043927",
+                  command=controller.register_driver).pack()
+
+    @staticmethod
+    def successful():
+        showinfo("Successful", "Driver Registered Completed")

@@ -6,7 +6,7 @@ from views.register import DriverRegistration
 
 
 class AdminDashboard(ttk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, user):
         self.__parent = parent
         self.__controller = controller
         super().__init__(self.__parent.frame)
@@ -42,8 +42,9 @@ class AdminDashboard(ttk.Frame):
         ttk.Label(self.__profile_frame, image=self.__avatar, background="#A3E3BE") \
             .pack(pady=self.__parent.get_height_pct(5))
 
-        ttk.Label(self.__profile_frame, text="Full Name", style="user_info.TLabel").pack()
-        ttk.Label(self.__profile_frame, text="#admin@username", style="user_info.TLabel", foreground="gray").pack()
+        ttk.Label(self.__profile_frame, text=user.get("full_name"), style="user_info.TLabel").pack()
+        ttk.Label(self.__profile_frame, text=f"#admin@{user.get('username')}", style="user_info.TLabel",
+                  foreground="gray").pack()
 
         # add space
         ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 60)).pack()
@@ -52,11 +53,17 @@ class AdminDashboard(ttk.Frame):
         self.search_bar = cw.InputBox(self.__profile_frame, placeholder_color="silver", placeholder="Search/filter",
                                       font=("", 15, "bold", "italic"))
         self.search_bar.pack()
+        # add space
+        ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 5)).pack()
 
+        self.search_btn = cw.Button(self.__profile_frame, text="Search",
+                                      **{k: v for k, v in self.__button_config.items() if k != 'font'},
+                                      font=("", 15, 'bold', 'italic'), )
+        self.search_btn.pack(fill=tk.X, padx=15)
         # sign out button
         cw.Button(self.__profile_frame, text="Sign Out",
-                  **self.__button_config
-                  ).pack(fill=tk.X, side=tk.BOTTOM)
+                  **self.__button_config,
+                  command=controller.logout).pack(fill=tk.X, side=tk.BOTTOM)
         # update idletasks to update the base_frame height
         self.update_idletasks()
         # now create the tabs for holding all the admin control pages
@@ -76,7 +83,7 @@ class AdminDashboard(ttk.Frame):
 
         tabs_holder = ttk.Notebook(frame)
         tabs_holder.pack(fill=tk.BOTH, expand=True)
-
+        tabs_holder.bind("<<NotebookTabChanged>>", lambda *a: self.__controller.tab_changed(tabs_holder))
         # create the frames/tabs
         request_tab = ttk.Frame(tabs_holder)
         confirmed_tab = ttk.Frame(tabs_holder)
@@ -97,25 +104,26 @@ class AdminDashboard(ttk.Frame):
         # create trip details table
         scroller = cw.ScrollFrame(request_tab)
         scroller.pack(fill=tk.BOTH, expand=True)
-        TripRequests(scroller.frame, self.__controller, width=frame.winfo_width())
+        self.requests_v = TripRequests(scroller.frame, self.__controller, width=frame.winfo_width())
 
         # create confirmed trips table
         scroller = cw.ScrollFrame(confirmed_tab)
         scroller.pack(fill=tk.BOTH, expand=True)
-        ConfirmedTrips(scroller.frame, self.__controller, width=frame.winfo_width())
+        self.confirmed_v = ConfirmedTrips(scroller.frame, self.__controller, width=frame.winfo_width())
 
         # create View drivers table
         scroller = cw.ScrollFrame(drivers_tab)
         scroller.pack(fill=tk.BOTH, expand=True)
-        ViewDrivers(scroller.frame, self.__controller, width=frame.winfo_width())
+        self.drivers_v = ViewDrivers(scroller.frame, self.__controller, width=frame.winfo_width())
 
         # create trips history table
         scroller = cw.ScrollFrame(history_tab)
         scroller.pack(fill=tk.BOTH, expand=True)
-        TripsHistory(scroller.frame, self.__controller, width=frame.winfo_width())
+        self.history_v = TripsHistory(scroller.frame, self.__controller, width=frame.winfo_width())
 
         # create driver registration tab
-        DriverRegistration(register_tab, self.__controller).pack(pady=100)
+        self.register_v = DriverRegistration(register_tab, self.__controller)
+        self.register_v.pack(pady=100)
 
 
 class TripRequests:

@@ -3,13 +3,13 @@ from views.register import RegistrationPage, CustomerRegistration
 from models.registration_model import RegistrationModel, InputException
 from models.login_model import LoginModel
 from controllers.customer_dashboard_controller import CDashboardController
+from controllers.admin_dashboard_controller import AdminDashboardController
 
 
 class LoginController:
     def __init__(self, basewindow):
         # get the instance of base window as well as its frame
         self.__window = basewindow
-        # self.__frame = self.__window.frame
         # instantiate the login view and add it to the base window
         self.__view = LoginPage(self.__window, self)
 
@@ -34,7 +34,7 @@ class LoginController:
         if role == "customer":
             CDashboardController(self.__window, home_page=LoginController, user=user)
         elif role == "admin":
-            pass
+            AdminDashboardController(self.__window, home_page=LoginController, user=user)
 
 
 class RegistrationController:
@@ -55,8 +55,7 @@ class RegistrationController:
         # fetch all the inputs from the input fields
 
     def __fetch_all(self):
-        full_name = self.__view.full_name.get()
-        email = self.__view.email_address.get().strip()
+        full_name = self.__view.full_name.get().strip()
         address = self.__view.address.get().strip()
         telephone = self.__view.telephone.get().strip()
         username = self.__view.username.get().strip()

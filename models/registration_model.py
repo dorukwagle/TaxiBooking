@@ -87,7 +87,7 @@ class RegistrationModel:
 
     def register_driver(self):
         hashed_pass = hs.hashed(self.__data.get("user_password"))
-        query1 = "insert into driver(full_name, gender, lincese_id, username) values(%s, %s, %s, %s)"
+        query1 = "insert into driver(full_name, gender, license_id, username) values(%s, %s, %s, %s)"
         query2 = "insert into credentials(username, user_password, user_role) values(%s, %s, 'driver')"
         self.__cursor.execute(query1, (
             self.__data.get("full_name"),
