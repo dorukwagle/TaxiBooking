@@ -4,6 +4,7 @@ from models.registration_model import RegistrationModel, InputException
 from models.login_model import LoginModel
 from controllers.customer_dashboard_controller import CDashboardController
 from controllers.admin_dashboard_controller import AdminDashboardController
+from controllers.driver_dashboard_controller import DriverDashboardController
 
 
 class LoginController:
@@ -35,6 +36,8 @@ class LoginController:
             CDashboardController(self.__window, home_page=LoginController, user=user)
         elif role == "admin":
             AdminDashboardController(self.__window, home_page=LoginController, user=user)
+        else:
+            DriverDashboardController(self.__window, home_page=LoginController, user=user)
 
 
 class RegistrationController:
@@ -56,6 +59,7 @@ class RegistrationController:
 
     def __fetch_all(self):
         full_name = self.__view.full_name.get().strip()
+        email = self.__view.email_address.get().strip()
         address = self.__view.address.get().strip()
         telephone = self.__view.telephone.get().strip()
         username = self.__view.username.get().strip()

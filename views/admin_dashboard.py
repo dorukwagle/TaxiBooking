@@ -133,7 +133,9 @@ class TripRequests:
 
         # crete a table to hold trip requests
         self.trips_request_table = cw.Table(parent, width=width, fontsize=15)
-        self.trips_request_table.set_heading(["head", "tail"])
+        self.trips_request_table.set_columns_width({0: 80, 1: 190, 4: 180, 3: 250})
+        self.trips_request_table.set_heading(["trip_id", "Customer Name", "Pick Up", "Date", "Driver"])
+        self.trips_request_table.set_row_height(40)
         self.trips_request_table.pack()
 
 

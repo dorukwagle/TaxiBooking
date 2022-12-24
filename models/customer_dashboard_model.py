@@ -76,11 +76,9 @@ class CDashboardModel:
         query = """select * from (select * from trip where cust_id=%s and trip_status!='cancelled') as t 
         where trip_status != 'completed' or payment_status != 'paid'"""
         self.__cursor.execute(query, [cust_id])
-        details = self.__cursor.fetchall()
-        trip_infos = []
-        for row in details:
+        return [
             # fetch the pickup and drop off time and convert to datetime
-            row_dict = dict(
+            dict(
                 trip_id=row[0],
                 pickup_address=row[1].replace("\n", " "),
                 drop_off_address=row[2].replace("\n", " "),
@@ -91,9 +89,8 @@ class CDashboardModel:
                 drop_off_datetime=row[7],  # convert timestamp to date and time
                 status=f'{row[8]}, {row[9]}',
                 driver_name=self.__get_driver_name(row[10])
-            )
-            trip_infos.append(row_dict)
-        return trip_infos
+            ) for row in self.__cursor.fetchall()
+        ]
 
     # method to get driver name
     def __get_driver_name(self, driver_id):

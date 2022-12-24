@@ -5,7 +5,7 @@ from PIL import ImageTk, Image
 
 
 class DriverDashboard(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, user_info):
         self.__parent = parent
         self.__controller = controller
 
