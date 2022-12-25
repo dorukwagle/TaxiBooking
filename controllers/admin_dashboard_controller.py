@@ -54,20 +54,33 @@ class AdminDashboardController:
     # load the confirmed trips into the confirmed trips view
     def load_confirmed_trips(self):
         trips_list = self.__model.get_confirmed_bookings()
+        if not trips_list:
+            return
+        self.__view.confirmed_v.confirmed_trips_table.reset()
+        self.__view.confirmed_v.confirmed_trips_table.add_rows(trips_list)
 
     # load the list of all the registered drivers into the drivers view
     def load_drivers(self):
         trips_list = self.__model.get_all_drivers()
+        if not trips_list:
+            return
+        self.__view.drivers_v.drivers_table.reset()
+        self.__view.drivers_v.drivers_table.add_rows(trips_list)
 
     # load the trips history into the history view
     def load_history(self):
         trips_list = self.__model.get_trips_history()
+        if not trips_list:
+            return
+        self.__view.history_v.trips_history_table.reset()
+        self.__view.history_v.trips_history_table.add_rows(trips_list)
 
     def register_driver(self):
         DriverRegistration(self.__view.register_v).sign_up()
 
-    def __assign_btn_click(self):
-        pass
+    def __assign_btn_click(self, row_index, row_data):
+        # fetch the available drivers data and display
+        print(row_index, row_data)
 
 
 # -----------------------Driver Registration---------------------

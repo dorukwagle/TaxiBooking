@@ -9,6 +9,8 @@ class AdminDashboard(ttk.Frame):
     def __init__(self, parent, controller, user):
         self.__parent = parent
         self.__controller = controller
+        # top level for displaying available drivers for the giver trip
+        self.available = None
         super().__init__(self.__parent.frame)
         # define button arguments
         self.__button_config = dict(takefocus=0, font=("", 20, "bold", "italic"),
@@ -125,13 +127,29 @@ class AdminDashboard(ttk.Frame):
         self.register_v = DriverRegistration(register_tab, self.__controller)
         self.register_v.pack(pady=100)
 
+    def show_available_drivers(self, data):
+        self.available = tk.Toplevel(self.__parent)
+        self.available.title("Drivers for the trip")
+        # create a table to hold drivers list
+        available_drivers = cw.Table(self.available, width=1000, fontsize=15)
+        available_drivers.set_columns_width({0: 100})
+        available_drivers.set_heading(["driver id", "Full Name", "License Id"])
+        available_drivers.set_row_height(40)
+        available_drivers.pack()
+        # fill the table
+        available_drivers.reset()
+        available_drivers.add_rows(data)
+        self.available.transient(self.__parent)
+        self.available.grab_set()
+        self.available.focus_set()
+
 
 class TripRequests:
     def __init__(self, parent, controller, width):
         self.__parent = parent
         self.__controller = controller
 
-        # crete a table to hold trip requests
+        # create a table to hold trip requests
         self.trips_request_table = cw.Table(parent, width=width, fontsize=15)
         self.trips_request_table.set_columns_width({0: 80, 1: 190, 4: 180, 3: 250})
         self.trips_request_table.set_heading(["trip_id", "Customer Name", "Pick Up", "Date", "Driver"])
@@ -144,14 +162,35 @@ class ConfirmedTrips:
         self.__parent = parent
         self.__controller = controller
 
+        # create a table to hold confirmed trips
+        self.confirmed_trips_table = cw.Table(parent, width=width, fontsize=15)
+        self.confirmed_trips_table.set_columns_width({0: 200, 1: 190, 5: 180, 3: 250})
+        self.confirmed_trips_table.set_heading(["Customer Name", "Telephone", "Pick Up", "Date", "Driver", "Status"])
+        self.confirmed_trips_table.set_row_height(40)
+        self.confirmed_trips_table.pack()
+
 
 class ViewDrivers:
     def __init__(self, parent, controller, width):
         self.__parent = parent
         self.__controller = controller
 
+        # create a table to hold drivers list
+        self.drivers_table = cw.Table(parent, width=width, fontsize=15)
+        self.drivers_table.set_columns_width({0: 100})
+        self.drivers_table.set_heading(["driver id", "Full Name", "License Id"])
+        self.drivers_table.set_row_height(40)
+        self.drivers_table.pack()
+
 
 class TripsHistory:
     def __init__(self, parent, controller, width):
         self.__parent = parent
         self.__controller = controller
+
+        # create a table to hold trips history
+        self.trips_history_table = cw.Table(parent, width=width, fontsize=15)
+        self.trips_history_table.set_columns_width({0: 250, 4: 200, 3: 250})
+        self.trips_history_table.set_heading(["Customer Name", "Pick Up", "Date", "Driver", "Status"])
+        self.trips_history_table.set_row_height(40)
+        self.trips_history_table.pack()

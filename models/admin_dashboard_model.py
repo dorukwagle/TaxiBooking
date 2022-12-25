@@ -25,14 +25,14 @@ class AdminDashboardModel:
                 " t.trip_status='confirmed' or t.payment_status='unpaid'"
         self.__cursor.execute(query)
         return [
-            dict(
-                customer_name=row[0],
-                telephone=row[1],
-                pickup_address=row[2],
-                pickup_datetime=row[3],
-                driver_name=row[4],
-                status=f"{row[5], row[6]}"
-            ) for row in self.__cursor.fetchall()
+            [
+                row[0],  # customer full name
+                row[1],  # customer telephone
+                row[2],  # pickup_address
+                row[3],  # pickup date and time
+                row[4],  # driver full name
+                f"{row[5], row[6]}"  # trip and payment status
+            ] for row in self.__cursor.fetchall()
         ]
 
     # fetch all the registered drivers
@@ -40,26 +40,26 @@ class AdminDashboardModel:
         query = "select driver_id, full_name, license_id from driver"
         self.__cursor.execute(query)
         return [
-            dict(
-                driver_id=row[0],
-                driver_name=row[1],
-                license_id=row[2]
-            ) for row in self.__cursor.fetchall()
+            [
+                row[0],  # driver id
+                row[1],  # driver full name
+                row[2]   # driver license id
+            ] for row in self.__cursor.fetchall()
         ]
 
     # fetch the trips history
     def get_trips_history(self):
-        query = "select c.full_name, c.pickup_address, c.pickup_datetime, d.full_name, t.trip_status, t.payment_status" \
+        query = "select c.full_name, t.pickup_address, t.pickup_datetime, d.full_name, t.trip_status, t.payment_status" \
                 " from customer c inner join trip t on c.cust_id = t.cust_id inner join driver d on " \
                 "d.driver_id = t.driver_id where (t.trip_status = 'completed' and t.payment_status = 'paid') or " \
                 "t.trip_status = 'cancelled'"
         self.__cursor.execute(query)
         return [
-            dict(
-                customer_name=row[0],
-                pickup_address=row[1],
-                pickup_datetime=row[2],
-                driver_name=row[3],
-                status=f"{row[4]}, {row[5]}"
-            ) for row in self.__cursor.fetchall()
+            [
+                row[0],  # customer full name
+                row[1],  # pickup address
+                row[2],  # pickup date and time
+                row[3],  # driver full name
+                f"{row[4]}, {row[5]}"  # trip and payment status
+            ] for row in self.__cursor.fetchall()
         ]
