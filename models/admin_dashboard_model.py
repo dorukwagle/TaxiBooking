@@ -49,17 +49,24 @@ class AdminDashboardModel:
 
     # fetch the trips history
     def get_trips_history(self):
-        query = "select c.full_name, t.pickup_address, t.pickup_datetime, d.full_name, t.trip_status, t.payment_status" \
-                " from customer c inner join trip t on c.cust_id = t.cust_id inner join driver d on " \
-                "d.driver_id = t.driver_id where (t.trip_status = 'completed' and t.payment_status = 'paid') or " \
+        # method to fetch driver name if driver is assigned to the trip
+        def get_driver_name(driver_id):
+            if not driver_id:
+                return "<<Not Assigned>>"
+            self.__cursor.execute("select full_name from driver where driver_id=%s", [driver_id])
+            return self.__cursor.fetchone()[0]
+
+        query = "select c.full_name, t.pickup_address, t.pickup_datetime, t.driver_id, t.trip_status, " \
+                "t.payment_status from customer c inner join trip t on c.cust_id = t.cust_id " \
+                "where (t.trip_status = 'completed' and t.payment_status = 'paid') or " \
                 "t.trip_status = 'cancelled'"
         self.__cursor.execute(query)
         return [
             [
                 row[0],  # customer full name
-                row[1],  # pickup address
+                row[1].replace("\n", " "),  # pickup address
                 row[2],  # pickup date and time
-                row[3],  # driver full name
+                get_driver_name(row[3]),  # driver full name
                 f"{row[4]}, {row[5]}"  # trip and payment status
             ] for row in self.__cursor.fetchall()
         ]

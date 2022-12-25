@@ -190,7 +190,7 @@ class TripsHistory:
 
         # create a table to hold trips history
         self.trips_history_table = cw.Table(parent, width=width, fontsize=15)
-        self.trips_history_table.set_columns_width({0: 250, 4: 200, 3: 250})
+        self.trips_history_table.set_columns_width({0: 240, 4: 200, 3: 250, 2: 200})
         self.trips_history_table.set_heading(["Customer Name", "Pick Up", "Date", "Driver", "Status"])
         self.trips_history_table.set_row_height(40)
         self.trips_history_table.pack()
