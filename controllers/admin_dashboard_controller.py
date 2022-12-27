@@ -88,7 +88,7 @@ class AdminDashboardController:
             self.__view.requests_v.trips_request_table.remove_row(row_index)
 
         # fetch the available drivers data and display
-        data = self.__model.get_available_drivers(row_data.get("pickup_datetime"), row_data.get("drop_off_datetime"))
+        data = self.__model.get_available_drivers(row_data.get("trip_id"))
         # add assign button to the table
         data = [
             list(row) + [('Assign', assign_driver)] for row in data

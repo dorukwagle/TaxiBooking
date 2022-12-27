@@ -72,7 +72,12 @@ class AdminDashboardModel:
         ]
 
     # fetch the available drivers for the given trip
-    def get_available_drivers(self, pickup_datetime, drop_off_datetime):
+    def get_available_drivers(self, trip_id):
+        # first obtain the pickup and dropoff datetime of the trip
+        query = "select pickup_datetime, drop_off_datetime from trip where trip_id=%s"
+        self.__cursor.execute(query, [trip_id])
+        pickup_datetime, drop_off_datetime = self.__cursor.fetchone()
+
         # first %s = pickup time, second %s = drop off address
         query = """ select driver_id, full_name, license_id from driver where driver_id not in
                ( select driver_id from trip where driver_id not in
