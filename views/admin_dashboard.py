@@ -9,8 +9,6 @@ class AdminDashboard(ttk.Frame):
     def __init__(self, parent, controller, user):
         self.__parent = parent
         self.__controller = controller
-        # top level for displaying available drivers for the giver trip
-        self.available = None
         super().__init__(self.__parent.frame)
         # define button arguments
         self.__button_config = dict(takefocus=0, font=("", 20, "bold", "italic"),
@@ -52,16 +50,16 @@ class AdminDashboard(ttk.Frame):
         ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 60)).pack()
 
         # add search bar
-        self.search_bar = cw.InputBox(self.__profile_frame, placeholder_color="silver", placeholder="Search/filter",
-                                      font=("", 15, "bold", "italic"))
-        self.search_bar.pack()
-        # add space
-        ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 5)).pack()
-
-        self.search_btn = cw.Button(self.__profile_frame, text="Search",
-                                      **{k: v for k, v in self.__button_config.items() if k != 'font'},
-                                      font=("", 15, 'bold', 'italic'), )
-        self.search_btn.pack(fill=tk.X, padx=15)
+        # self.search_bar = cw.InputBox(self.__profile_frame, placeholder_color="silver", placeholder="Search/filter",
+        #                               font=("", 15, "bold", "italic"))
+        # self.search_bar.pack()
+        # # add space
+        # ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 5)).pack()
+        #
+        # self.search_btn = cw.Button(self.__profile_frame, text="Search",
+        #                               **{k: v for k, v in self.__button_config.items() if k != 'font'},
+        #                               font=("", 15, 'bold', 'italic'), )
+        # self.search_btn.pack(fill=tk.X, padx=15)
         # sign out button
         cw.Button(self.__profile_frame, text="Sign Out",
                   **self.__button_config,
@@ -128,20 +126,27 @@ class AdminDashboard(ttk.Frame):
         self.register_v.pack(pady=100)
 
     def show_available_drivers(self, data):
-        self.available = tk.Toplevel(self.__parent)
-        self.available.title("Drivers for the trip")
+        available = tk.Toplevel(self.__parent)
+        available.title("Drivers for the trip")
         # create a table to hold drivers list
-        available_drivers = cw.Table(self.available, width=1000, fontsize=15)
-        available_drivers.set_columns_width({0: 100})
-        available_drivers.set_heading(["driver id", "Full Name", "License Id"])
+        scroller = cw.ScrollFrame(available)
+        scroller.pack(fill="both", expand=True)
+        available_drivers = cw.Table(scroller, width=1000, fontsize=15)
+        available_drivers.set_columns_width({0: 150, 3: 150})
+        available_drivers.set_heading(["driver id", "Full Name", "License Id", "Assign"])
+
         available_drivers.set_row_height(40)
         available_drivers.pack()
         # fill the table
         available_drivers.reset()
         available_drivers.add_rows(data)
-        self.available.transient(self.__parent)
-        self.available.grab_set()
-        self.available.focus_set()
+
+        cw.Button(available, text="Done",
+                  **self.__button_config,
+                  command=available.destroy).pack(fill='x', expand=True)
+        available.transient(self.__parent)
+        available.grab_set()
+        available.focus_set()
 
 
 class TripRequests:

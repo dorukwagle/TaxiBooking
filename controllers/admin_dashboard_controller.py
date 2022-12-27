@@ -30,13 +30,13 @@ class AdminDashboardController:
             self.load_history()
 
         # if tab index is 3, control the search bar and button
-        if tab_index == 3:
-            self.__view.search_bar.config(state='disabled')
-            self.__view.search_btn.config(state='disabled')
-            return
-        if str(self.__view.search_bar['state']) == 'disabled':
-            self.__view.search_bar.config(state='normal')
-            self.__view.search_btn.config(state='normal')
+        # if tab_index == 3:
+        #     self.__view.search_bar.config(state='disabled')
+        #     self.__view.search_btn.config(state='disabled')
+        #     return
+        # if str(self.__view.search_bar['state']) == 'disabled':
+        #     self.__view.search_bar.config(state='normal')
+        #     self.__view.search_btn.config(state='normal')
 
     # load the pending trips into the trips request view
     def load_pending_trips(self):
@@ -79,8 +79,21 @@ class AdminDashboardController:
         DriverRegistration(self.__view.register_v).sign_up()
 
     def __assign_btn_click(self, row_index, row_data):
+        # function to assign driver when the assign button is clicked
+        def assign_driver(table_data):
+            trip_id = row_data.get("trip_id")
+            driver_id = table_data.get("driver_id")
+            self.__model.assign_driver(trip_id, driver_id)
+            # now that the driver is assigned to the trip request, remove it from the list
+            self.__view.requests_v.trips_request_table.remove_row(row_index)
+
         # fetch the available drivers data and display
-        print(row_index, row_data)
+        data = self.__model.get_available_drivers(row_data.get("pickup_datetime"), row_data.get("drop_off_datetime"))
+        # add assign button to the table
+        data = [
+            list(row) + [('Assign', assign_driver)] for row in data
+        ]
+        self.__view.show_available_drivers(data)
 
 
 # -----------------------Driver Registration---------------------
