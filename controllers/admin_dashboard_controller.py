@@ -80,7 +80,7 @@ class AdminDashboardController:
 
     def __assign_btn_click(self, row_index, row_data):
         # function to assign driver when the assign button is clicked
-        def assign_driver(table_data):
+        def assign_driver(_, table_data):
             trip_id = row_data.get("trip_id")
             driver_id = table_data.get("driver_id")
             self.__model.assign_driver(trip_id, driver_id)

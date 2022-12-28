@@ -2,6 +2,7 @@ from tkinter import ttk
 import tkinter as tk
 import views.custom_widget as cw
 from PIL import ImageTk, Image
+from tkinter import messagebox
 
 
 class DriverDashboard(tk.Frame):
@@ -42,16 +43,57 @@ class DriverDashboard(tk.Frame):
         ttk.Label(self.__profile_frame, image=self.__avatar, background="#A3E3BE") \
             .pack(pady=self.__parent.get_height_pct(5))
 
-        ttk.Label(self.__profile_frame, text="Full Name", style="user_info.TLabel").pack()
-        ttk.Label(self.__profile_frame, text="#driver@username", style="user_info.TLabel", foreground="gray").pack()
+        ttk.Label(self.__profile_frame, text=user_info.get('full_name'), style="user_info.TLabel").pack()
+
+        ttk.Label(self.__profile_frame, text=f"#driver@{user_info.get('username')}",
+                  style="user_info.TLabel", foreground="gray").pack()
 
         # add space
         ttk.Label(self.__profile_frame, text="", style="user_info.TLabel", font=("", 60)).pack()
 
         # sign out button
         cw.Button(self.__profile_frame, text="Sign Out",
-                  **self.__button_config
+                  **self.__button_config, command=controller.sign_out
                   ).pack(fill=tk.X, side=tk.BOTTOM)
         # update idletasks to update the base_frame height
         self.update_idletasks()
         self.pack()
+
+        style = ttk.Style()
+        style.layout("driver.TNotebook", [])
+        style.configure("driver.TNotebook", highlightbackground="green", tabmargins=0)
+        style.configure("driver.TNotebook.Tab", font=("", 13, "bold", "italic"), takefocus=0,
+                        width=self.__parent.get_width_pct(80),
+                        background="#299617", foreground="white", padding=10, focuscolor="#0a6522")
+        style.map("driver.TNotebook.Tab", background=[("selected", "#0a6522")])
+
+        tabs_holder = ttk.Notebook(self.base_frame, style="driver.TNotebook")
+        tabs_holder.pack(fill=tk.BOTH, expand=True)
+        tabs_holder.bind("<<NotebookTabChanged>>", lambda *a: self.__controller.tab_changed(tabs_holder))
+        # create the frames/tabs
+        upcoming_tab = ttk.Frame(tabs_holder)
+        history_tab = ttk.Frame(tabs_holder)
+
+        tabs_holder.add(upcoming_tab, text="Upcoming Trips")
+        tabs_holder.add(history_tab, text="Trips History")
+
+        scroller = cw.ScrollFrame(upcoming_tab)
+        scroller.pack(fill=tk.BOTH, expand=True)
+        self.upcoming_table = cw.Table(scroller, width=self.__parent.get_width_pct(80), fontsize=15)
+        self.upcoming_table.set_columns_width({0: 100, 3: 180, 2: 250})
+        self.upcoming_table.set_heading(["Trip Id", "Pick Up", "Drop Off", "Date", "Mark As"])
+        self.upcoming_table.set_row_height(40)
+        self.upcoming_table.pack()
+
+        scroller = cw.ScrollFrame(history_tab)
+        scroller.pack(fill=tk.BOTH, expand=True)
+        self.history_table = cw.Table(scroller, width=self.__parent.get_width_pct(80), fontsize=15)
+        self.history_table.set_columns_width({0: 190, 3: 180, 2: 250})
+        self.history_table.set_heading(["Customer Name", "Pick Up", "Date", "status"])
+        self.history_table.set_row_height(40)
+        self.history_table.pack()
+
+    @staticmethod
+    def confirm_message():
+        return messagebox.askyesno("Trip Completion", "Do you want to mark this trip as completed ?")
+
