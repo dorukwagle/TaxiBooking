@@ -231,6 +231,11 @@ class CDashboardController:
         except InvalidData as e:
             self.__booking_view.error_msg.config(text=str(e))
             return
+        # now remove both the markers
+        self.__drop_off_marker.delete()
+        self.__pickup_marker.delete()
+        self.__drop_off_marker = None
+        self.__pickup_marker = None
         # redirect the user to the trip_details section
         self.trips_view()
 

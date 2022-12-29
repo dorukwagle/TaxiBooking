@@ -462,7 +462,6 @@ class CreateCard(tk.Frame):
     # remove the card at given index
     def remove(self, index):
         self.__card_list[index].destroy()
-        self.__card_list.pop(index)
 
     # delete all the cards
     def reset(self):

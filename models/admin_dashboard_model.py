@@ -81,7 +81,8 @@ class AdminDashboardModel:
         # first %s = pickup time, second %s = drop off address
         query = """ select driver_id, full_name, license_id from driver where driver_id not in
                ( select driver_id from trip where driver_id not in
-                (select driver_id from trip where drop_off_datetime < %s or pickup_datetime > %s) )
+                (select driver_id from trip where driver_id is not NULL and 
+                (drop_off_datetime < %s or pickup_datetime > %s)))
         """
         self.__cursor.execute(query, [pickup_datetime, drop_off_datetime])
         return self.__cursor.fetchall()
