@@ -20,7 +20,7 @@ class LoginController:
     def login(self):
         # fetch user credentials from the input fields
         username = self.__view.username.get().strip()
-        password = self.__view.password.get().strip()
+        password = self.__view.password.get()
         log_model = LoginModel(dict(
             username=username,
             user_password=password
@@ -63,7 +63,7 @@ class RegistrationController:
         address = self.__view.address.get().strip()
         telephone = self.__view.telephone.get().strip()
         username = self.__view.username.get().strip()
-        password = self.__view.password.get().strip()
+        password = self.__view.password.get()
         confirm_pass = self.__view.confirm_password.get().strip()
         gender = self.__view.gender.get().strip().lower() if self.__view.gender.current() > -1 else ""
         payment_method = self.__view.payment_method.get().strip() if self.__view.payment_method.current() > -1 else ""

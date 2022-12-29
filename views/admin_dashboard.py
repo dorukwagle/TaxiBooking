@@ -169,7 +169,7 @@ class ConfirmedTrips:
 
         # create a table to hold confirmed trips
         self.confirmed_trips_table = cw.Table(parent, width=width, fontsize=15)
-        self.confirmed_trips_table.set_columns_width({0: 200, 1: 190, 5: 180, 3: 250})
+        self.confirmed_trips_table.set_columns_width({0: 200, 1: 190, 5: 200, 3: 250})
         self.confirmed_trips_table.set_heading(["Customer Name", "Telephone", "Pick Up", "Date", "Driver", "Status"])
         self.confirmed_trips_table.set_row_height(40)
         self.confirmed_trips_table.pack()

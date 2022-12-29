@@ -232,7 +232,8 @@ class Table(ttk.Frame):
 
     # remove the row at given index
     def remove_row(self, index):
-        row = self.__row_refer.pop(index)
+        # row = self.__row_refer.pop(index)
+        row = self.__row_refer[index]
         row.destroy()
 
     # remove all the rows and reset the table
@@ -243,7 +244,6 @@ class Table(ttk.Frame):
         #     self.__heading_set = False
         for widget in self.__row_refer:
             widget.destroy()
-
 
     # change row color when hover
     def __row_hover(self, row_index):

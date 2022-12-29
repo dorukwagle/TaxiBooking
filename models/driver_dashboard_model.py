@@ -11,11 +11,17 @@ class DriverDashboardModel:
         return self.__cursor.fetchall()
 
     def get_booking_history(self, driver_id):
-        query = "select trip_id, cust_id, pickup_address, pickup_datetime, trip_status, payment_status from trip " \
-                "where driver_id=%s"
+        # function to fetch customer name
+        def get_customer_name(customer_id):
+            sql = "select full_name from customer where cust_id=%s"
+            self.__cursor.execute(sql, [customer_id])
+            return self.__cursor.fetchone()[0]
+
+        query = "select cust_id, pickup_address, pickup_datetime, trip_status, payment_status from trip " \
+                "where driver_id=%s and (trip_status='completed' or trip_status='cancelled' )"
         self.__cursor.execute(query, [driver_id])
         return [
-            list(row)[:-2] + [f"{row[-2]}, {row[-1]}"]
+            [get_customer_name(row[0])] + list(row)[1:-2] + [f"{row[-2]}, {row[-1]}"]
             for row in self.__cursor.fetchall()
         ]
 

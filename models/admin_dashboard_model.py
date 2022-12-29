@@ -31,7 +31,7 @@ class AdminDashboardModel:
                 row[2],  # pickup_address
                 row[3],  # pickup date and time
                 row[4],  # driver full name
-                f"{row[5], row[6]}"  # trip and payment status
+                f"{row[5]}, {row[6]}"  # trip and payment status
             ] for row in self.__cursor.fetchall()
         ]
 
@@ -88,5 +88,5 @@ class AdminDashboardModel:
 
     # method to assign driver
     def assign_driver(self, trip_id, driver_id):
-        query = "update trip set driver_id=%s where trip_id=%s"
-        self.__cursor.execute(query, [trip_id, driver_id])
+        query = "update trip set driver_id=%s, trip_status='confirmed' where trip_id=%s"
+        self.__cursor.execute(query, [driver_id, trip_id])

@@ -13,23 +13,26 @@ class DriverDashboardController:
     def sign_out(self):
         self.__home_page(self.__window)
 
-    def tab_changed(self, tab_index):
+    def tab_changed(self, notebook):
         # function to mark the booking as completed
-        def mark_completed(table_data):
+        def mark_completed(row_index, table_data):
             ask = self.__view.confirm_message()
-            if ask == "no":
+            if not ask:
                 return
             # mark the trip as completed
-            self.__model.mark_completed(table_data.get("trip_id"))
+            self.__model.mark_completed(table_data.get("Trip Id"))
+            # remove the row from the table
+            self.__view.upcoming_table.remove_row(row_index)
 
-        if tab_index == 0:
-            data = self.__model.get_upcoming_bookings(self.__user.get("driver_id"))
+        index = notebook.index(notebook.select())
+        if index == 0:
+            data = self.__model.get_upcoming_bookings(self.__user.get("user_id"))
             data = [
-                row.append(('Completed', mark_completed)) for row in data
+                list(row) + [('Completed', mark_completed)] for row in data
             ]
             self.__view.upcoming_table.reset()
             self.__view.upcoming_table.add_rows(data)
         else:
-            data = self.__model.get_booking_history(self.__user.get("driver_id"))
+            data = self.__model.get_booking_history(self.__user.get("user_id"))
             self.__view.history_table.reset()
             self.__view.history_table.add_rows(data)

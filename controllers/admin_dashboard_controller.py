@@ -82,7 +82,7 @@ class AdminDashboardController:
         # function to assign driver when the assign button is clicked
         def assign_driver(_, table_data):
             trip_id = row_data.get("trip_id")
-            driver_id = table_data.get("driver_id")
+            driver_id = table_data.get("driver id")
             self.__model.assign_driver(trip_id, driver_id)
             # now that the driver is assigned to the trip request, remove it from the list
             self.__view.requests_v.trips_request_table.remove_row(row_index)
@@ -107,7 +107,7 @@ class DriverRegistration:
         address = self.__view.address.get().strip()
         license_id = self.__view.license_id.get().strip()
         username = self.__view.username.get().strip()
-        password = self.__view.password.get().strip()
+        password = self.__view.password.get()
         confirm_pass = self.__view.confirm_password.get().strip()
         gender = self.__view.gender.get().strip().lower() if self.__view.gender.current() > -1 else ""
 
