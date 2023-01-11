@@ -122,9 +122,6 @@ class CDashboardModel:
         query = "update trip set payment_status='paid' where trip_id=%s"
         self.__cursor.execute(query, [trip_id])
 
-    def complete_trip(self, trip_id):
-        query = "update trip set trip_status='completed' where trip_id=%s"
-        self.__cursor.execute(query, [trip_id])
 
     # returns a single trip information
     def get_trip(self, trip_id):

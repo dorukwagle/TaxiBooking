@@ -5,6 +5,7 @@ from PIL import ImageTk, Image
 from pathlib import Path
 from tkinter.messagebox import showinfo
 
+
 def combo_select(combobox):
     combobox["foreground"] = "black"
 
