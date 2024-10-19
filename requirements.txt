@@ -2,7 +2,8 @@ pillow~=9.3.0
 tkcalendar~=1.6.1
 tktimepicker~=2.0.2
 tkintermapview~=1.19
-psycopg2~=2.9.5
 
 future~=0.18.2
 geocoder~=1.38.1
+
+psycopg2~=2.9.5

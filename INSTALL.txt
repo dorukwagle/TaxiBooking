@@ -2,4 +2,4 @@
 
 pip install -r requirements.txt
 
-apt install python3-pil python3-pil.imagetk
+apt install python3-pil python3-pil.imagetk libpq-dev python3-dev
